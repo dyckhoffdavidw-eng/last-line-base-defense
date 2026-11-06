@@ -6,6 +6,9 @@ const context = canvas.getContext('2d');
 const waveValue = document.querySelector('#wave-value');
 const creditsValue = document.querySelector('#credits-value');
 const killsValue = document.querySelector('#kills-value');
+const gunLevelText = document.querySelector('#gun-level');
+const xpText = document.querySelector('#xp-text');
+const xpFill = document.querySelector('#xp-fill');
 const healthText = document.querySelector('#health-text');
 const healthFill = document.querySelector('#health-fill');
 const pauseButton = document.querySelector('#pause-button');
@@ -28,35 +31,36 @@ const skillsPanel = document.querySelector('#skills-panel');
 const armoryTabs = [...document.querySelectorAll('[data-armory-tab]')];
 
 const BASE_HEALTH = 100;
+const MAX_GUN_LEVEL = 100;
 const PIXELS_PER_METER = 100;
 const skillDefinitions = [
-  { id: 'gun-damage-1', tree: 'gun', branch: 'Damage', stat: 'damage', rank: 1, name: 'High-Caliber I', description: '+1 bullet damage', cost: 30 },
-  { id: 'gun-damage-2', tree: 'gun', branch: 'Damage', stat: 'damage', rank: 2, name: 'High-Caliber II', description: '+1 bullet damage', cost: 55 },
-  { id: 'gun-damage-3', tree: 'gun', branch: 'Damage', stat: 'damage', rank: 3, name: 'High-Caliber III', description: '+1 bullet damage', cost: 85 },
-  { id: 'gun-rate-1', tree: 'gun', branch: 'Fire rate', stat: 'rate', rank: 1, name: 'Rapid Fire I', description: '+0.9 shots / second', cost: 35 },
-  { id: 'gun-rate-2', tree: 'gun', branch: 'Fire rate', stat: 'rate', rank: 2, name: 'Rapid Fire II', description: '+0.9 shots / second', cost: 60 },
-  { id: 'gun-rate-3', tree: 'gun', branch: 'Fire rate', stat: 'rate', rank: 3, name: 'Rapid Fire III', description: '+0.9 shots / second', cost: 90 },
-  { id: 'base-plating-1', tree: 'base', branch: 'Plating', stat: 'plating', rank: 1, name: 'Reinforced I', description: '+20 maximum health', cost: 30 },
-  { id: 'base-plating-2', tree: 'base', branch: 'Plating', stat: 'plating', rank: 2, name: 'Reinforced II', description: '+20 maximum health', cost: 55 },
-  { id: 'base-plating-3', tree: 'base', branch: 'Plating', stat: 'plating', rank: 3, name: 'Reinforced III', description: '+20 maximum health', cost: 85 },
-  { id: 'base-engineering-1', tree: 'base', branch: 'Engineering', stat: 'engineering', rank: 1, name: 'Engineering I', description: '+6 wave repair, +8% resist', cost: 40 },
-  { id: 'base-engineering-2', tree: 'base', branch: 'Engineering', stat: 'engineering', rank: 2, name: 'Engineering II', description: '+6 wave repair, +8% resist', cost: 65 },
-  { id: 'base-engineering-3', tree: 'base', branch: 'Engineering', stat: 'engineering', rank: 3, name: 'Engineering III', description: '+6 wave repair, +8% resist', cost: 95 },
-  { id: 'projectile-multi-1', tree: 'projectile', branch: 'Multishot', stat: 'multishot', rank: 1, name: 'Multishot I', description: '+1 projectile per shot', cost: 60 },
-  { id: 'projectile-multi-2', tree: 'projectile', branch: 'Multishot', stat: 'multishot', rank: 2, name: 'Multishot II', description: '+1 projectile per shot', cost: 110 },
-  { id: 'projectile-bounce-1', tree: 'projectile', branch: 'Bounce shot', stat: 'bounce', rank: 1, name: 'Ricochet I', description: '+1 wall bounce', cost: 50 },
-  { id: 'projectile-bounce-2', tree: 'projectile', branch: 'Bounce shot', stat: 'bounce', rank: 2, name: 'Ricochet II', description: '+1 wall bounce', cost: 90 },
-  { id: 'projectile-distance-1', tree: 'projectile', branch: 'Damage / meter', stat: 'distance', rank: 1, name: 'Longshot I', description: '+20% damage per meter', cost: 45 },
-  { id: 'projectile-distance-2', tree: 'projectile', branch: 'Damage / meter', stat: 'distance', rank: 2, name: 'Longshot II', description: '+20% damage per meter', cost: 80 }
+  { id: 'gun-damage-1', tree: 'gun', branch: 'Damage', stat: 'damage', rank: 1, requiredLevel: 1, name: 'High-Caliber I', description: '+1 bullet damage', cost: 30 },
+  { id: 'gun-damage-2', tree: 'gun', branch: 'Damage', stat: 'damage', rank: 2, requiredLevel: 20, name: 'High-Caliber II', description: '+1 bullet damage', cost: 90 },
+  { id: 'gun-damage-3', tree: 'gun', branch: 'Damage', stat: 'damage', rank: 3, requiredLevel: 55, name: 'High-Caliber III', description: '+1 bullet damage', cost: 180 },
+  { id: 'gun-rate-1', tree: 'gun', branch: 'Fire rate', stat: 'rate', rank: 1, requiredLevel: 5, name: 'Rapid Fire I', description: '+0.9 base shots / second', cost: 40 },
+  { id: 'gun-rate-2', tree: 'gun', branch: 'Fire rate', stat: 'rate', rank: 2, requiredLevel: 30, name: 'Rapid Fire II', description: '+0.9 base shots / second', cost: 110 },
+  { id: 'gun-rate-3', tree: 'gun', branch: 'Fire rate', stat: 'rate', rank: 3, requiredLevel: 70, name: 'Rapid Fire III', description: '+0.9 base shots / second', cost: 220 },
+  { id: 'base-plating-1', tree: 'base', branch: 'Plating', stat: 'plating', rank: 1, requiredLevel: 1, name: 'Reinforced I', description: '+20 base max health', cost: 40 },
+  { id: 'base-plating-2', tree: 'base', branch: 'Plating', stat: 'plating', rank: 2, requiredLevel: 25, name: 'Reinforced II', description: '+20 base max health', cost: 100 },
+  { id: 'base-plating-3', tree: 'base', branch: 'Plating', stat: 'plating', rank: 3, requiredLevel: 60, name: 'Reinforced III', description: '+20 base max health', cost: 200 },
+  { id: 'base-engineering-1', tree: 'base', branch: 'Engineering', stat: 'engineering', rank: 1, requiredLevel: 10, name: 'Engineering I', description: '+6 base wave repair, +8% resist', cost: 50 },
+  { id: 'base-engineering-2', tree: 'base', branch: 'Engineering', stat: 'engineering', rank: 2, requiredLevel: 40, name: 'Engineering II', description: '+6 base wave repair, +8% resist', cost: 120 },
+  { id: 'base-engineering-3', tree: 'base', branch: 'Engineering', stat: 'engineering', rank: 3, requiredLevel: 80, name: 'Engineering III', description: '+6 base wave repair, +8% resist', cost: 250 },
+  { id: 'projectile-multi-1', tree: 'projectile', branch: 'Multishot', stat: 'multishot', rank: 1, requiredLevel: 15, name: 'Multishot I', description: '+1 projectile per shot', cost: 75 },
+  { id: 'projectile-multi-2', tree: 'projectile', branch: 'Multishot', stat: 'multishot', rank: 2, requiredLevel: 65, name: 'Multishot II', description: '+1 projectile per shot', cost: 180 },
+  { id: 'projectile-bounce-1', tree: 'projectile', branch: 'Bounce shot', stat: 'bounce', rank: 1, requiredLevel: 25, name: 'Ricochet I', description: '+1 wall bounce', cost: 60 },
+  { id: 'projectile-bounce-2', tree: 'projectile', branch: 'Bounce shot', stat: 'bounce', rank: 2, requiredLevel: 75, name: 'Ricochet II', description: '+1 wall bounce', cost: 160 },
+  { id: 'projectile-distance-1', tree: 'projectile', branch: 'Damage / meter', stat: 'distance', rank: 1, requiredLevel: 35, name: 'Longshot I', description: '+20% damage per meter', cost: 70 },
+  { id: 'projectile-distance-2', tree: 'projectile', branch: 'Damage / meter', stat: 'distance', rank: 2, requiredLevel: 90, name: 'Longshot II', description: '+20% damage per meter', cost: 170 }
 ];
 const skillLevels = { damage: 0, rate: 0, plating: 0, engineering: 0, multishot: 0, bounce: 0, distance: 0 };
 const skillNodes = new Map();
 const weaponDefinitions = [
-  { id: 'rifle', name: 'Rifle', icon: '●', cost: 0, description: 'Balanced single-shot rifle. Uses every projectile skill.', damageMultiplier: 1, rateMultiplier: 1, speed: 700, projectiles: 1, splash: 0, pierce: 1, radius: 4 },
-  { id: 'cannon', name: 'Cannon', icon: '◉', cost: 90, description: 'Explosive splash damage and heavy shells, but slow firing.', damageMultiplier: 3.5, rateMultiplier: 0.38, speed: 520, projectiles: 1, splash: 70, pierce: 1, radius: 7 },
-  { id: 'machinegun', name: 'Twin machine gun', icon: 'Ⅱ', cost: 75, description: 'Two barrels and rapid fire, with lower damage per bullet.', damageMultiplier: 0.55, rateMultiplier: 2.05, speed: 760, projectiles: 2, splash: 0, pierce: 1, radius: 3 },
-  { id: 'sniper', name: 'Sniper', icon: '⌖', cost: 100, description: 'High damage and fast rounds that pierce up to three enemies.', damageMultiplier: 4.2, rateMultiplier: 0.3, speed: 1150, projectiles: 1, splash: 0, pierce: 3, radius: 3 },
-  { id: 'laser', name: 'Laser', icon: '━', cost: 150, description: 'Continuous instant beam. Gunnery skills boost it; projectile skills do not.', damagePerSecond: 5 }
+  { id: 'rifle', name: 'Rifle', icon: '●', cost: 0, requiredLevel: 1, description: 'Balanced single-shot rifle. Uses every projectile skill.', damageMultiplier: 1, rateMultiplier: 1, speed: 700, projectiles: 1, splash: 0, pierce: 1, radius: 4 },
+  { id: 'cannon', name: 'Cannon', icon: '◉', cost: 100, requiredLevel: 5, description: 'Explosive splash damage and heavy shells, but slow firing.', damageMultiplier: 3.5, rateMultiplier: 0.38, speed: 520, projectiles: 1, splash: 70, pierce: 1, radius: 7 },
+  { id: 'machinegun', name: 'Twin machine gun', icon: 'Ⅱ', cost: 200, requiredLevel: 20, description: 'Two barrels and rapid fire, with lower damage per bullet.', damageMultiplier: 0.55, rateMultiplier: 2.05, speed: 760, projectiles: 2, splash: 0, pierce: 1, radius: 3 },
+  { id: 'sniper', name: 'Sniper', icon: '⌖', cost: 400, requiredLevel: 50, description: 'High damage and fast rounds that pierce up to three enemies.', damageMultiplier: 4.2, rateMultiplier: 0.3, speed: 1150, projectiles: 1, splash: 0, pierce: 3, radius: 3 },
+  { id: 'laser', name: 'Laser', icon: '━', cost: 1000, requiredLevel: 100, description: 'Continuous instant beam. Gunnery skills boost it; projectile skills do not.', damagePerSecond: 5 }
 ];
 const weaponNodes = new Map();
 const unlockedWeapons = new Set(['rifle']);
@@ -70,8 +74,13 @@ let state = 'menu';
 let wave = 1;
 let credits = 0;
 let kills = 0;
+let gunLevel = 1;
+let gunXP = 0;
+let levelUpTimer = 0;
+let bossSpawned = false;
 let baseHealth = BASE_HEALTH;
 let enemies = [];
+let pendingSplits = [];
 let bullets = [];
 let particles = [];
 let spawnRemaining = 0;
@@ -103,20 +112,41 @@ function equippedWeapon() {
   return weaponDefinitions.find((weapon) => weapon.id === currentWeapon);
 }
 
+function xpRequired(level = gunLevel) {
+  return 60 + (level - 1) * 45;
+}
+
+function gunLevelDamageMultiplier() {
+  return 1 + (gunLevel - 1) * 0.06;
+}
+
+function enemyStrengthScale() {
+  return 1 + (wave - 1) * 0.14 + (gunLevel - 1) * 0.05;
+}
+
+function enemyRewardScale() {
+  return 1 + (wave - 1) * 0.18 + (gunLevel - 1) * 0.08;
+}
+
 function bulletDamage() {
-  return (1 + skillLevels.damage) * (equippedWeapon().damageMultiplier || 1);
+  return (1 + skillLevels.damage) * gunLevelDamageMultiplier() * (equippedWeapon().damageMultiplier || 1);
 }
 
 function fireRate() {
-  return (4 + skillLevels.rate * 0.9) * (equippedWeapon().rateMultiplier || 1);
+  const skillScaling = 1 + (gunLevel - 1) * 0.01;
+  return (4 + skillLevels.rate * 0.9 * skillScaling) * (equippedWeapon().rateMultiplier || 1);
+}
+
+function skillEffectScale() {
+  return 1 + (gunLevel - 1) * 0.03;
 }
 
 function laserDamagePerSecond() {
-  return equippedWeapon().damagePerSecond * (1 + skillLevels.damage) * (1 + skillLevels.rate * 0.225);
+  return equippedWeapon().damagePerSecond * (1 + skillLevels.damage) * gunLevelDamageMultiplier() * (1 + skillLevels.rate * 0.225);
 }
 
 function maxBaseHealth() {
-  return BASE_HEALTH + skillLevels.plating * 20;
+  return Math.round(BASE_HEALTH + skillLevels.plating * 20 * skillEffectScale());
 }
 
 function baseDamageReduction() {
@@ -124,14 +154,36 @@ function baseDamageReduction() {
 }
 
 function waveRepairAmount() {
-  return skillLevels.engineering * 6;
+  return Math.round(skillLevels.engineering * 6 * skillEffectScale());
+}
+
+function gainExperience(amount) {
+  if (gunLevel >= MAX_GUN_LEVEL) {
+    gunXP = 0;
+    updateHUD();
+    return;
+  }
+
+  gunXP += amount;
+
+  while (gunLevel < MAX_GUN_LEVEL && gunXP >= xpRequired()) {
+    gunXP -= xpRequired();
+    gunLevel += 1;
+    levelUpTimer = 2.5;
+  }
+
+  if (gunLevel >= MAX_GUN_LEVEL) gunXP = 0;
+  updateHUD();
 }
 
 function updateHUD() {
   waveValue.textContent = wave;
   creditsValue.textContent = credits;
   killsValue.textContent = kills;
-  footerWeaponText.textContent = equippedWeapon().name;
+  gunLevelText.textContent = gunLevel;
+  xpText.textContent = gunLevel >= MAX_GUN_LEVEL ? 'MAX LEVEL' : `${Math.floor(gunXP)} / ${xpRequired()} XP`;
+  xpFill.style.width = gunLevel >= MAX_GUN_LEVEL ? '100%' : `${Math.min(100, gunXP / xpRequired() * 100)}%`;
+  footerWeaponText.textContent = `${equippedWeapon().name} · Lv. ${gunLevel}`;
   healthText.textContent = `${Math.ceil(baseHealth)} / ${maxBaseHealth()}`;
   healthFill.style.width = `${baseHealth / maxBaseHealth() * 100}%`;
   healthFill.style.background = baseHealth <= 30 ? '#ff6b6b' : '#58d68d';
@@ -148,6 +200,10 @@ function startGame() {
   wave = 1;
   credits = 0;
   kills = 0;
+  gunLevel = 1;
+  gunXP = 0;
+  levelUpTimer = 0;
+  bossSpawned = false;
   baseHealth = BASE_HEALTH;
   currentWeapon = 'rifle';
   unlockedWeapons.clear();
@@ -156,6 +212,7 @@ function startGame() {
   laserBeam = null;
   for (const stat of Object.keys(skillLevels)) skillLevels[stat] = 0;
   enemies = [];
+  pendingSplits = [];
   bullets = [];
   particles = [];
   fireCooldown = 0;
@@ -170,6 +227,7 @@ function startGame() {
 function startWave(number) {
   wave = number;
   spawnRemaining = 4 + wave * 2;
+  bossSpawned = false;
   spawnTimer = 0.6;
   fireCooldown = 0;
   laserBeam = null;
@@ -180,20 +238,22 @@ function startWave(number) {
   updateHUD();
 }
 
-function spawnEnemy() {
-  const roll = Math.random();
-  let type = 'standard';
+function scaleEnemy(enemy) {
+  const strength = enemyStrengthScale();
+  const rewards = enemyRewardScale();
+  enemy.health = Math.ceil(enemy.health * strength);
+  enemy.maxHealth = enemy.health;
+  enemy.damage = Math.ceil(enemy.damage * (1 + (wave - 1) * 0.06 + (gunLevel - 1) * 0.02));
+  enemy.reward = Math.round(enemy.reward * rewards);
+  enemy.experience = Math.round(enemy.experience * rewards);
+  return enemy;
+}
 
-  if (wave >= 2 && roll < 0.18) {
-    type = 'heavy';
-  } else if (roll < 0.45) {
-    type = 'fast';
-  }
-
+function createEnemy(type, x = 28 + Math.random() * Math.max(1, width - 56), y = -28) {
   const enemy = {
     id: nextEnemyId,
-    x: 28 + Math.random() * Math.max(1, width - 56),
-    y: -28,
+    x,
+    y,
     type,
     health: 2 + Math.floor((wave - 1) / 4),
     maxHealth: 2 + Math.floor((wave - 1) / 4),
@@ -201,29 +261,85 @@ function spawnEnemy() {
     speed: 46 + wave * 2.5,
     damage: 8,
     reward: 10,
+    experience: 10,
     color: '#ff6b6b'
   };
 
   if (type === 'fast') {
     enemy.health = 1 + Math.floor((wave - 1) / 5);
-    enemy.maxHealth = enemy.health;
     enemy.radius = 10;
-    enemy.speed = 84 + wave * 3;
+    enemy.speed = 88 + wave * 3;
     enemy.damage = 6;
     enemy.reward = 12;
+    enemy.experience = 9;
     enemy.color = '#ffb454';
-  } else if (type === 'heavy') {
-    enemy.health = 6 + wave;
-    enemy.maxHealth = enemy.health;
-    enemy.radius = 20;
-    enemy.speed = 31 + wave * 1.5;
-    enemy.damage = 18;
-    enemy.reward = 22;
-    enemy.color = '#e05252';
+  } else if (type === 'tank') {
+    enemy.health = 9 + wave * 2;
+    enemy.radius = 21;
+    enemy.speed = 30 + wave * 1.3;
+    enemy.damage = 22;
+    enemy.reward = 28;
+    enemy.experience = 28;
+    enemy.color = '#d94b4b';
+  } else if (type === 'splitter') {
+    enemy.health = 4 + Math.floor(wave / 2);
+    enemy.radius = 17;
+    enemy.speed = 43 + wave * 2;
+    enemy.damage = 10;
+    enemy.reward = 20;
+    enemy.experience = 22;
+    enemy.color = '#ff8c69';
+  } else if (type === 'boss') {
+    enemy.health = 55 + wave * 15;
+    enemy.radius = 34;
+    enemy.speed = 22 + wave;
+    enemy.damage = 35;
+    enemy.reward = 100 + wave * 5;
+    enemy.experience = 150 + wave * 10;
+    enemy.color = '#ff3b3b';
+  } else if (type === 'mini') {
+    enemy.health = 1;
+    enemy.radius = 6;
+    enemy.speed = 100 + wave * 3;
+    enemy.damage = 2;
+    enemy.reward = 2;
+    enemy.experience = 3;
+    enemy.color = '#ffc0a3';
   }
 
+  return scaleEnemy(enemy);
+}
+
+function addEnemy(type, x, y) {
+  const enemy = createEnemy(type, x, y);
   nextEnemyId += 1;
   enemies.push(enemy);
+  return enemy;
+}
+
+function spawnEnemy() {
+  const roll = Math.random();
+  let type = 'standard';
+
+  if (wave % 5 === 0 && !bossSpawned) {
+    type = 'boss';
+    bossSpawned = true;
+  } else if (wave >= 3 && roll < 0.15) {
+    type = 'splitter';
+  } else if (wave >= 2 && roll < 0.32) {
+    type = 'tank';
+  } else if (roll < 0.55) {
+    type = 'fast';
+  }
+
+  addEnemy(type);
+}
+
+function spawnMiniEnemies(splitter) {
+  for (let index = 0; index < 5; index += 1) {
+    const angle = index / 5 * Math.PI * 2;
+    addEnemy('mini', splitter.x + Math.cos(angle) * 10, splitter.y + Math.sin(angle) * 10);
+  }
 }
 
 function addParticles(x, y, color, count = 6, speed = 90) {
@@ -311,8 +427,9 @@ function damageEnemyAtIndex(index, damage, hitX, hitY) {
     enemies.splice(index, 1);
     credits += enemy.reward;
     kills += 1;
+    gainExperience(enemy.experience);
     addParticles(enemy.x, enemy.y, enemy.color, 10, 115);
-    updateHUD();
+    if (enemy.type === 'splitter') pendingSplits.push(enemy);
   }
 }
 
@@ -388,8 +505,8 @@ function showUpgrades() {
   credits += waveBonus;
   baseHealth += repaired;
   upgradeMessage.textContent = repaired > 0
-    ? `Wave bonus: ${waveBonus} credits. Engineering restored ${repaired} health.`
-    : `Wave bonus: ${waveBonus} credits. Choose a skill or save for later.`;
+    ? `Wave bonus: ${waveBonus} gold. Engineering restored ${repaired} health.`
+    : `Wave bonus: ${waveBonus} gold. Choose a skill or save for later.`;
   updateHUD();
   updateUpgradeUI();
   upgradeOverlay.hidden = false;
@@ -405,7 +522,7 @@ function buildWeaponCards() {
       <span class="weapon-icon" aria-hidden="true">${weapon.icon}</span>
       <strong>${weapon.name}</strong>
       <span class="weapon-description">${weapon.description}</span>
-      <span class="weapon-action">${weapon.cost} credits</span>
+      <span class="weapon-action">${weapon.cost} gold</span>
     `;
     button.addEventListener('click', () => selectWeapon(weapon.id));
     weaponNodes.set(weapon.id, button);
@@ -430,15 +547,16 @@ function updateWeaponUI() {
     const button = weaponNodes.get(weapon.id);
     const unlocked = unlockedWeapons.has(weapon.id);
     const selected = currentWeapon === weapon.id;
-    const unaffordable = !unlocked && credits < weapon.cost;
+    const levelLocked = !unlocked && gunLevel < weapon.requiredLevel;
+    const unaffordable = !unlocked && !levelLocked && credits < weapon.cost;
 
-    button.disabled = selected || unaffordable;
+    button.disabled = selected || levelLocked || unaffordable;
     button.classList.toggle('is-selected', selected);
-    button.classList.toggle('is-unavailable', unaffordable);
+    button.classList.toggle('is-unavailable', levelLocked || unaffordable);
     button.setAttribute('aria-pressed', String(selected));
     button.querySelector('.weapon-action').textContent = selected
       ? 'Equipped'
-      : unlocked ? 'Equip' : `Unlock · ${weapon.cost} credits`;
+      : unlocked ? 'Equip' : levelLocked ? `Requires gun level ${weapon.requiredLevel}` : `Unlock · ${weapon.cost} gold`;
   }
 }
 
@@ -448,7 +566,7 @@ function selectWeapon(weaponId) {
   if (!weapon) return;
 
   if (!unlockedWeapons.has(weaponId)) {
-    if (credits < weapon.cost) return;
+    if (gunLevel < weapon.requiredLevel || credits < weapon.cost) return;
     credits -= weapon.cost;
     unlockedWeapons.add(weaponId);
     upgradeMessage.textContent = `${weapon.name} unlocked and equipped.`;
@@ -485,7 +603,7 @@ function buildSkillTrees() {
           <span class="skill-rank">Rank ${skill.rank}</span>
           <strong>${skill.name}</strong>
           <span class="skill-description">${skill.description}</span>
-          <span class="skill-cost">${skill.cost} credits</span>
+          <span class="skill-cost">${skill.cost} gold</span>
         `;
         button.addEventListener('click', () => buySkill(skill.id));
         skillNodes.set(skill.id, button);
@@ -500,7 +618,7 @@ function buildSkillTrees() {
 function updateUpgradeUI() {
   updateWeaponUI();
   upgradeCredits.textContent = credits;
-  repairCostText.textContent = baseHealth >= maxBaseHealth() ? 'Base at full health' : '20 credits';
+  repairCostText.textContent = baseHealth >= maxBaseHealth() ? 'Base at full health' : '20 gold';
   repairButton.disabled = baseHealth >= maxBaseHealth() || credits < 20;
 
   for (const skill of skillDefinitions) {
@@ -508,23 +626,24 @@ function updateUpgradeUI() {
     const currentLevel = skillLevels[skill.stat];
     const owned = currentLevel >= skill.rank;
     const locked = currentLevel < skill.rank - 1;
-    const unaffordable = !owned && !locked && credits < skill.cost;
+    const levelLocked = !owned && gunLevel < skill.requiredLevel;
+    const unaffordable = !owned && !locked && !levelLocked && credits < skill.cost;
 
-    button.disabled = owned || locked || unaffordable;
+    button.disabled = owned || locked || levelLocked || unaffordable;
     button.classList.toggle('is-owned', owned);
-    button.classList.toggle('is-locked', locked);
+    button.classList.toggle('is-locked', locked || levelLocked);
     button.classList.toggle('is-unaffordable', unaffordable);
     button.setAttribute('aria-pressed', String(owned));
     button.querySelector('.skill-cost').textContent = owned
       ? 'Owned'
-      : locked ? `Requires rank ${skill.rank - 1}` : `${skill.cost} credits`;
+      : locked ? `Requires rank ${skill.rank - 1}` : levelLocked ? `Gun level ${skill.requiredLevel}` : `${skill.cost} gold`;
   }
 }
 
 function buySkill(skillId) {
   if (state !== 'upgrade') return;
   const skill = skillDefinitions.find((item) => item.id === skillId);
-  if (!skill || skillLevels[skill.stat] !== skill.rank - 1 || credits < skill.cost) return;
+  if (!skill || skillLevels[skill.stat] !== skill.rank - 1 || gunLevel < skill.requiredLevel || credits < skill.cost) return;
 
   credits -= skill.cost;
   skillLevels[skill.stat] += 1;
@@ -673,6 +792,11 @@ function update(deltaTime) {
     }
   }
 
+  if (pendingSplits.length > 0) {
+    for (const splitter of pendingSplits) spawnMiniEnemies(splitter);
+    pendingSplits = [];
+  }
+
   for (let index = particles.length - 1; index >= 0; index -= 1) {
     const particle = particles[index];
     particle.x += particle.vx * deltaTime;
@@ -684,6 +808,7 @@ function update(deltaTime) {
   }
 
   screenShake = Math.max(0, screenShake - deltaTime * 30);
+  levelUpTimer = Math.max(0, levelUpTimer - deltaTime);
 
   if (spawnRemaining === 0 && enemies.length === 0) showUpgrades();
 }
@@ -769,6 +894,71 @@ function drawPlayer() {
   context.restore();
 }
 
+function drawEnemy(enemy) {
+  const radius = enemy.radius;
+  context.save();
+  context.translate(enemy.x, enemy.y);
+  context.fillStyle = enemy.color;
+  context.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+  context.lineWidth = 2;
+
+  if (enemy.type === 'fast') {
+    context.beginPath();
+    context.moveTo(0, radius + 3);
+    context.lineTo(-radius, -radius);
+    context.lineTo(radius, -radius);
+    context.closePath();
+    context.fill();
+    context.stroke();
+  } else if (enemy.type === 'tank') {
+    context.fillRect(-radius, -radius * 0.72, radius * 2, radius * 1.44);
+    context.strokeRect(-radius, -radius * 0.72, radius * 2, radius * 1.44);
+    context.fillStyle = '#582727';
+    context.fillRect(-radius - 4, -radius * 0.75, 6, radius * 1.5);
+    context.fillRect(radius - 2, -radius * 0.75, 6, radius * 1.5);
+    context.fillStyle = enemy.color;
+    context.beginPath();
+    context.arc(0, 0, radius * 0.48, 0, Math.PI * 2);
+    context.fill();
+    context.fillRect(-3, 0, 6, radius + 10);
+  } else {
+    context.beginPath();
+    context.arc(0, 0, radius, 0, Math.PI * 2);
+    context.fill();
+    context.stroke();
+
+    if (enemy.type === 'splitter') {
+      context.fillStyle = '#6b2d25';
+      for (let index = 0; index < 5; index += 1) {
+        const angle = index / 5 * Math.PI * 2 - Math.PI / 2;
+        context.beginPath();
+        context.arc(Math.cos(angle) * 8, Math.sin(angle) * 8, 2.5, 0, Math.PI * 2);
+        context.fill();
+      }
+    } else if (enemy.type !== 'mini') {
+      context.fillStyle = '#351717';
+      context.beginPath();
+      context.arc(-radius * 0.3, 2, 2, 0, Math.PI * 2);
+      context.arc(radius * 0.3, 2, 2, 0, Math.PI * 2);
+      context.fill();
+    }
+  }
+
+  if (enemy.type === 'boss') {
+    context.strokeStyle = '#ffb454';
+    context.lineWidth = 4;
+    context.beginPath();
+    context.arc(0, 0, radius + 7, 0, Math.PI * 2);
+    context.stroke();
+    context.fillStyle = '#ffb454';
+    context.font = '800 10px system-ui';
+    context.textAlign = 'center';
+    context.fillText('BOSS', 0, -radius - 15);
+  }
+
+  context.restore();
+}
+
 function render() {
   context.clearRect(0, 0, width, height);
   context.fillStyle = '#0b120e';
@@ -838,21 +1028,9 @@ function render() {
   }
 
   for (const enemy of enemies) {
-    context.fillStyle = enemy.color;
-    context.beginPath();
-    context.arc(enemy.x, enemy.y, enemy.radius, 0, Math.PI * 2);
-    context.fill();
-    context.strokeStyle = 'rgba(255, 255, 255, 0.35)';
-    context.lineWidth = 2;
-    context.stroke();
+    drawEnemy(enemy);
 
-    context.fillStyle = '#351717';
-    context.beginPath();
-    context.arc(enemy.x - enemy.radius * 0.3, enemy.y + 2, 2, 0, Math.PI * 2);
-    context.arc(enemy.x + enemy.radius * 0.3, enemy.y + 2, 2, 0, Math.PI * 2);
-    context.fill();
-
-    if (enemy.health < enemy.maxHealth) {
+    if (enemy.type === 'boss' || enemy.health < enemy.maxHealth) {
       const barWidth = enemy.radius * 2;
       context.fillStyle = '#351717';
       context.fillRect(enemy.x - enemy.radius, enemy.y - enemy.radius - 9, barWidth, 4);
@@ -873,6 +1051,20 @@ function render() {
     context.moveTo(aim.x + 5, Math.min(aim.y, player.y - 20));
     context.lineTo(aim.x + 13, Math.min(aim.y, player.y - 20));
     context.stroke();
+  }
+
+  if (levelUpTimer > 0 && state === 'playing') {
+    context.globalAlpha = Math.min(1, levelUpTimer);
+    context.fillStyle = '#8ee6ae';
+    context.font = '800 25px system-ui';
+    context.textAlign = 'center';
+    context.fillText(`GUN LEVEL ${gunLevel}`, width / 2, 65);
+    if (weaponDefinitions.some((weapon) => weapon.requiredLevel === gunLevel)) {
+      context.fillStyle = '#ffd166';
+      context.font = '700 12px system-ui';
+      context.fillText('NEW WEAPON AVAILABLE IN THE ARMORY', width / 2, 86);
+    }
+    context.globalAlpha = 1;
   }
 
   context.restore();

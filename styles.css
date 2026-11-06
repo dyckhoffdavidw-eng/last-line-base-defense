@@ -181,6 +181,30 @@ kbd {
   transition: width 0.2s ease, background 0.2s ease;
 }
 
+.xp-track {
+  height: 5px;
+  margin-top: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #28332b;
+}
+
+.xp-fill {
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--credits);
+  transition: width 0.2s ease;
+}
+
+.xp-text {
+  display: block;
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 0.58rem;
+  font-variant-numeric: tabular-nums;
+}
+
 .game-shell {
   position: relative;
   overflow: hidden;

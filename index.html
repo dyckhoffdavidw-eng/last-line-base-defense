@@ -27,7 +27,7 @@
         <strong id="wave-value">1</strong>
       </div>
       <div class="stat">
-        <span class="stat-label">Credits</span>
+        <span class="stat-label">Gold</span>
         <strong class="credits" id="credits-value">0</strong>
       </div>
       <div class="stat stat--health">
@@ -39,9 +39,14 @@
           <div class="health-fill" id="health-fill"></div>
         </div>
       </div>
-      <div class="stat">
-        <span class="stat-label">Enemies stopped</span>
-        <strong id="kills-value">0</strong>
+      <div class="stat stat--gun-level">
+        <div class="health-heading">
+          <span class="stat-label">Gun level</span>
+          <strong id="gun-level">1</strong>
+        </div>
+        <div class="xp-track" aria-hidden="true"><div class="xp-fill" id="xp-fill"></div></div>
+        <span class="xp-text" id="xp-text">0 / 60 XP</span>
+        <span id="kills-value" hidden>0</span>
       </div>
     </section>
 
@@ -52,7 +57,7 @@
         <div class="overlay-card overlay-card--menu">
           <p class="eyebrow">The perimeter is breached</p>
           <h2>Hold the line.</h2>
-          <p>Stop enemies before they reach your base. Earn credits with every takedown and improve your defenses between waves.</p>
+          <p>Stop enemies before they reach your base. Earn gold and gun XP with every takedown, then improve your defenses between waves.</p>
           <div class="control-hints">
             <span>Mouse / touch to aim</span>
             <span>Hold to fire</span>
@@ -74,7 +79,7 @@
         <div class="overlay-card overlay-card--upgrades">
           <p class="eyebrow">Wave cleared</p>
           <h2>Armory</h2>
-          <p class="upgrade-balance">Available credits: <strong id="upgrade-credits">0</strong></p>
+          <p class="upgrade-balance">Available gold: <strong id="upgrade-credits">0</strong></p>
           <div class="upgrade-tabs" aria-label="Armory sections">
             <button type="button" data-armory-tab="weapons" class="is-active" aria-pressed="true">Weapons</button>
             <button type="button" data-armory-tab="skills" aria-pressed="false">Skill trees</button>
@@ -113,7 +118,7 @@
           </section>
           <div class="repair-service">
             <div><strong>Field repairs</strong><span>Restore 30 base health</span></div>
-            <button id="repair-button" type="button"><span id="repair-cost">20 credits</span></button>
+            <button id="repair-button" type="button"><span id="repair-cost">20 gold</span></button>
           </div>
           <p class="upgrade-message" id="upgrade-message" role="status">Choose a skill, or save your credits.</p>
           <button class="button button--primary" id="next-wave-button" type="button">Start next wave</button>
