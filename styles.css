@@ -1,0 +1,717 @@
+:root {
+  color-scheme: dark;
+  --background: #080d0a;
+  --panel: #111914;
+  --panel-light: #18231c;
+  --border: #29382e;
+  --text: #edf5ef;
+  --muted: #93a399;
+  --accent: #58d68d;
+  --accent-light: #8ee6ae;
+  --accent-dark: #102217;
+  --danger: #ff6b6b;
+  --credits: #ffd166;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  min-height: 100svh;
+  margin: 0;
+  padding: 22px;
+  background:
+    radial-gradient(circle at 50% -20%, rgba(88, 214, 141, 0.1), transparent 45%),
+    var(--background);
+  color: var(--text);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+button {
+  font: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.app {
+  width: min(100%, 1100px);
+  margin: 0 auto;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-mark {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border: 1px solid var(--accent);
+  border-radius: 12px;
+  background: rgba(88, 214, 141, 0.08);
+  color: var(--accent);
+  font-size: 1.25rem;
+  transform: rotate(45deg);
+}
+
+.brand-mark::first-letter {
+  transform: rotate(-45deg);
+}
+
+h1 {
+  margin: 0;
+  font-size: 1.25rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.brand p {
+  margin: 3px 0 0;
+  color: var(--muted);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.icon-button {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--panel);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.icon-button:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+
+.icon-button:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+kbd {
+  margin-left: 5px;
+  padding: 1px 5px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.68rem;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: 0.65fr 0.85fr 2fr 1.1fr;
+  gap: 1px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-bottom: 0;
+  border-radius: 14px 14px 0 0;
+  background: var(--border);
+}
+
+.stat {
+  min-width: 0;
+  padding: 12px 16px;
+  background: var(--panel);
+}
+
+.stat-label {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--muted);
+  font-size: 0.67rem;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.stat strong {
+  font-size: 1.15rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat .credits {
+  color: var(--credits);
+}
+
+.health-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.health-heading strong {
+  font-size: 0.8rem;
+}
+
+.health-track {
+  height: 6px;
+  margin-top: 7px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #28332b;
+}
+
+.health-fill {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+  transition: width 0.2s ease, background 0.2s ease;
+}
+
+.game-shell {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 0 0 14px 14px;
+  background: #0b120e;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+}
+
+#game-canvas {
+  display: block;
+  width: 100%;
+  height: clamp(430px, calc(100svh - 245px), 680px);
+  outline: none;
+  cursor: crosshair;
+  touch-action: none;
+}
+
+#game-canvas:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  overflow-y: auto;
+  padding: 24px;
+  place-items: center;
+  background: rgba(6, 11, 8, 0.84);
+  backdrop-filter: blur(5px);
+}
+
+.overlay-card {
+  width: min(100%, 580px);
+  text-align: center;
+}
+
+.overlay-card--compact {
+  max-width: 420px;
+}
+
+.overlay-card--upgrades {
+  width: min(100%, 850px);
+}
+
+#upgrade-overlay {
+  padding: 18px;
+}
+
+.overlay-card--upgrades h2 {
+  margin-bottom: 8px;
+  font-size: 2.2rem;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  color: var(--accent);
+  font-size: 0.7rem;
+  font-weight: 750;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.eyebrow--danger {
+  color: var(--danger);
+}
+
+.overlay h2 {
+  margin: 0 0 14px;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  letter-spacing: -0.045em;
+  line-height: 1.05;
+}
+
+.overlay-card--compact h2,
+.overlay-card--upgrades h2 {
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+}
+
+.overlay p:not(.eyebrow) {
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.overlay-card--menu > p:not(.eyebrow) {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.control-hints {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin: 24px 0;
+}
+
+.control-hints span {
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--panel);
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.button {
+  min-width: 170px;
+  padding: 12px 22px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 750;
+}
+
+.button--primary {
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: var(--accent-dark);
+}
+
+.button--primary:hover {
+  border-color: var(--accent-light);
+  background: var(--accent-light);
+}
+
+button:focus-visible {
+  outline: 3px solid rgba(88, 214, 141, 0.3);
+  outline-offset: 3px;
+}
+
+.upgrade-balance {
+  margin: 0 0 14px;
+  font-size: 0.85rem;
+}
+
+.upgrade-balance strong {
+  color: var(--credits);
+}
+
+.upgrade-tabs {
+  display: flex;
+  width: fit-content;
+  margin: 0 auto 14px;
+  padding: 3px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--panel);
+}
+
+.upgrade-tabs button {
+  padding: 7px 18px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.upgrade-tabs button.is-active {
+  background: var(--accent-soft);
+  color: var(--accent-light);
+}
+
+.weapon-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+  color: var(--muted);
+  font-size: 0.7rem;
+  text-align: left;
+}
+
+.weapon-heading strong {
+  color: var(--accent-light);
+  white-space: nowrap;
+}
+
+.weapon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 8px;
+}
+
+.weapon-card {
+  display: flex;
+  min-width: 0;
+  min-height: 152px;
+  padding: 12px 9px 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  align-items: center;
+  flex-direction: column;
+  background: var(--panel);
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.weapon-card:hover:not(:disabled) {
+  border-color: var(--accent);
+  background: var(--panel-light);
+}
+
+.weapon-card:disabled {
+  cursor: default;
+}
+
+.weapon-card.is-selected {
+  border-color: var(--accent);
+  background: rgba(88, 214, 141, 0.1);
+}
+
+.weapon-card.is-unavailable {
+  opacity: 0.5;
+}
+
+.weapon-card .weapon-icon {
+  color: var(--accent);
+  font-size: 1.35rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.weapon-card strong {
+  margin: 8px 0 6px;
+  font-size: 0.8rem;
+}
+
+.weapon-card .weapon-description {
+  color: var(--muted);
+  font-size: 0.63rem;
+  line-height: 1.4;
+}
+
+.weapon-card .weapon-action {
+  margin-top: auto;
+  padding-top: 10px;
+  color: var(--credits);
+  font-size: 0.65rem;
+  font-weight: 750;
+}
+
+.weapon-card.is-selected .weapon-action {
+  color: var(--accent-light);
+}
+
+.skill-trees {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.skill-tree {
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgba(17, 25, 20, 0.85);
+}
+
+.skill-tree--projectiles {
+  grid-column: 1 / -1;
+}
+
+.skill-tree--projectiles .skill-branches {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.tree-heading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  margin-bottom: 8px;
+  text-align: left;
+}
+
+.tree-heading h3 {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.tree-heading p {
+  margin: 2px 0 0;
+  font-size: 0.65rem;
+}
+
+.tree-icon {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border-radius: 8px;
+  background: rgba(88, 214, 141, 0.1);
+  color: var(--accent);
+  font-weight: 800;
+}
+
+.skill-branches {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.skill-branch {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.skill-branch h4 {
+  margin: 0 0 2px;
+  color: var(--muted);
+  font-size: 0.62rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.skill-node {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  min-height: 66px;
+  padding: 7px 5px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  align-items: center;
+  flex-direction: column;
+  background: #0f1712;
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.skill-node:not(:last-child)::after {
+  position: absolute;
+  bottom: -9px;
+  left: 50%;
+  width: 2px;
+  height: 8px;
+  background: var(--border);
+  content: '';
+}
+
+.skill-node:hover:not(:disabled) {
+  border-color: var(--accent);
+  background: var(--panel-light);
+}
+
+.skill-node:disabled {
+  cursor: default;
+}
+
+.skill-node.is-locked {
+  opacity: 0.42;
+}
+
+.skill-node.is-unaffordable {
+  opacity: 0.65;
+}
+
+.skill-node.is-owned {
+  border-color: var(--accent);
+  background: rgba(88, 214, 141, 0.1);
+}
+
+.skill-node .skill-rank {
+  color: var(--accent);
+  font-size: 0.55rem;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.skill-node strong {
+  margin: 3px 0;
+  font-size: 0.69rem;
+  line-height: 1.2;
+}
+
+.skill-node .skill-description {
+  color: var(--muted);
+  font-size: 0.59rem;
+  line-height: 1.3;
+}
+
+.skill-node .skill-cost {
+  margin-top: 4px;
+  color: var(--credits);
+  font-size: 0.61rem;
+  font-weight: 700;
+}
+
+.skill-node.is-owned .skill-cost {
+  color: var(--accent-light);
+}
+
+.repair-service {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 10px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--panel);
+  text-align: left;
+}
+
+.repair-service strong,
+.repair-service div > span {
+  display: block;
+}
+
+.repair-service strong {
+  font-size: 0.75rem;
+}
+
+.repair-service div > span {
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 0.65rem;
+}
+
+.repair-service button {
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--panel-light);
+  color: var(--credits);
+  cursor: pointer;
+  font-size: 0.67rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.repair-service button:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+
+.repair-service button:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+.overlay-card .upgrade-message {
+  min-height: 1.4em;
+  margin: 10px 0;
+  font-size: 0.75rem;
+}
+
+.game-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 24px;
+  padding: 13px 8px 0;
+  color: var(--muted);
+  font-size: 0.7rem;
+}
+
+.game-footer strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+@media (max-width: 680px) {
+  body {
+    padding: 12px;
+  }
+
+  .stats {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .stat {
+    padding: 10px 12px;
+  }
+
+  .stat--health {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  #game-canvas {
+    height: max(440px, calc(100svh - 285px));
+  }
+
+  .overlay {
+    padding: 18px;
+  }
+
+  .weapon-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .weapon-card {
+    min-height: 140px;
+  }
+
+  .skill-trees {
+    grid-template-columns: 1fr;
+  }
+
+  .skill-node {
+    min-height: 68px;
+  }
+
+  .overlay-card--upgrades h2 {
+    margin-bottom: 6px;
+  }
+
+  .upgrade-balance {
+    margin-bottom: 10px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+  }
+}
