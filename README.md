@@ -51,7 +51,7 @@ Weapons require both the necessary gun level and a one-time gold unlock cost.
 - **Fast:** low health and high speed.
 - **Tank:** appears from wave 20; slow armored enemy with high health and base damage.
 - **Splitter:** creates five mini-enemies when destroyed.
-- **Boss:** guaranteed every fifth wave, with high health, damage, gold, and XP. The first boss has 26% less health than the standard boss scaling.
+- **Boss:** guaranteed every fifth wave, with high health, damage, gold, and XP. The first boss is named Butters, wears glasses, and has 26% less health than the standard boss scaling.
 - **Ranged:** appears from wave 5; stops at firing distance and shoots visible projectiles at the base.
 - **Shield:** appears from wave 15; projects a 110-pixel aura that reduces damage to itself and nearby allies by 55%.
 - **Healer:** appears from wave 10; restores 12% health to the most injured nearby ally every 2.4 seconds.
