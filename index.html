@@ -56,6 +56,25 @@
     <section class="game-shell">
       <canvas id="game-canvas" tabindex="0" aria-label="Base defense game area"></canvas>
 
+      <section class="base-stats-window" aria-label="Live base and weapon statistics">
+        <div class="base-stats-heading"><span>Base stats</span><strong id="stats-weapon">Rifle</strong></div>
+        <dl class="base-stats-list">
+          <div><dt>Damage</dt><dd id="stats-damage">1</dd></div>
+          <div><dt>Fire rate</dt><dd id="stats-fire-rate">4/s</dd></div>
+          <div><dt>Crit chance</dt><dd id="stats-crit-chance">0%</dd></div>
+          <div><dt>Crit amount</dt><dd id="stats-crit-amount">150%</dd></div>
+          <div><dt>Split shot</dt><dd id="stats-split-shot">Rank 0 · 1 shot</dd></div>
+          <div><dt>Bounce shot</dt><dd id="stats-bounce">Rank 0</dd></div>
+          <div><dt>Bounce range</dt><dd id="stats-bounce-range">140 px</dd></div>
+          <div><dt>Explosive rounds</dt><dd id="stats-explosive">Off</dd></div>
+          <div><dt>Damage / meter</dt><dd id="stats-distance">0%/m</dd></div>
+          <div><dt>Gun damage bonus</dt><dd id="stats-gun-bonus">+0%</dd></div>
+          <div><dt>Base max health</dt><dd id="stats-max-health">100</dd></div>
+          <div><dt>Damage resistance</dt><dd id="stats-resistance">0%</dd></div>
+          <div><dt>Wave repair</dt><dd id="stats-wave-repair">0</dd></div>
+        </dl>
+      </section>
+
       <div class="overlay" id="menu-overlay">
         <div class="overlay-card overlay-card--menu">
           <p class="eyebrow">The perimeter is breached</p>

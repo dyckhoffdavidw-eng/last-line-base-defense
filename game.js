@@ -33,6 +33,22 @@ const footerWeaponText = document.querySelector('#footer-weapon');
 const weaponsPanel = document.querySelector('#weapons-panel');
 const skillsPanel = document.querySelector('#skills-panel');
 const armoryTabs = [...document.querySelectorAll('[data-armory-tab]')];
+const statsElements = {
+  weapon: document.querySelector('#stats-weapon'),
+  damage: document.querySelector('#stats-damage'),
+  fireRate: document.querySelector('#stats-fire-rate'),
+  critChance: document.querySelector('#stats-crit-chance'),
+  critAmount: document.querySelector('#stats-crit-amount'),
+  splitShot: document.querySelector('#stats-split-shot'),
+  bounce: document.querySelector('#stats-bounce'),
+  bounceRange: document.querySelector('#stats-bounce-range'),
+  explosive: document.querySelector('#stats-explosive'),
+  distance: document.querySelector('#stats-distance'),
+  gunBonus: document.querySelector('#stats-gun-bonus'),
+  maxHealth: document.querySelector('#stats-max-health'),
+  resistance: document.querySelector('#stats-resistance'),
+  waveRepair: document.querySelector('#stats-wave-repair')
+};
 
 const BASE_HEALTH = 100;
 const MAX_GUN_LEVEL = 100;
@@ -244,6 +260,29 @@ function gainExperience(amount) {
   updateHUD();
 }
 
+function formatStatValue(value) {
+  return String(Number(value.toFixed(2)));
+}
+
+function updateStatsWindow() {
+  const laserEquipped = currentWeapon === 'laser';
+  const splitRank = splitShotRank();
+  statsElements.weapon.textContent = equippedWeapon().name;
+  statsElements.damage.textContent = laserEquipped ? `${formatStatValue(laserDamagePerSecond())}/s` : formatStatValue(bulletDamage());
+  statsElements.fireRate.textContent = laserEquipped ? 'Continuous' : `${formatStatValue(fireRate())}/s`;
+  statsElements.critChance.textContent = `${formatStatValue(criticalChance() * 100)}%`;
+  statsElements.critAmount.textContent = `${formatStatValue(criticalDamageMultiplier() * 100)}%`;
+  statsElements.splitShot.textContent = currentWeapon === 'machinegun' ? `Locked · Rank ${skillLevels.multishot}` : `Rank ${splitRank} · ${1 + splitRank} shot${splitRank > 0 ? 's' : ''}`;
+  statsElements.bounce.textContent = `Rank ${skillLevels.bounce} · 60% damage`;
+  statsElements.bounceRange.textContent = `${BASE_BOUNCE_RANGE + skillLevels.bounceRange * BOUNCE_RANGE_PER_RANK} px`;
+  statsElements.explosive.textContent = skillLevels.explosiveRounds > 0 ? `${EXPLOSIVE_ROUNDS_RADIUS} px · ${formatStatValue(explosiveRoundsDamage() * 100)}%` : 'Off';
+  statsElements.distance.textContent = `${formatStatValue(skillLevels.distance * 0.15)}%/m`;
+  statsElements.gunBonus.textContent = `+${formatStatValue((gunLevelDamageMultiplier() - 1) * 100)}%`;
+  statsElements.maxHealth.textContent = maxBaseHealth();
+  statsElements.resistance.textContent = `${formatStatValue(baseDamageReduction() * 100)}%`;
+  statsElements.waveRepair.textContent = waveRepairAmount();
+}
+
 function updateHUD() {
   waveValue.textContent = wave;
   creditsValue.textContent = credits;
@@ -258,6 +297,7 @@ function updateHUD() {
   healthText.textContent = `${Math.ceil(baseHealth)} / ${maxBaseHealth()}`;
   healthFill.style.width = `${baseHealth / maxBaseHealth() * 100}%`;
   healthFill.style.background = baseHealth <= 30 ? '#ff6b6b' : '#58d68d';
+  updateStatsWindow();
 }
 
 function hideOverlays() {
@@ -1523,6 +1563,67 @@ function drawEquippedWeapon() {
   }
 }
 
+function drawGunner() {
+  context.save();
+  context.translate(-38, -28);
+  context.lineCap = 'round';
+
+  // Boots and legs planted on the command roof.
+  context.strokeStyle = '#132b3d';
+  context.lineWidth = 7;
+  context.beginPath();
+  context.moveTo(-5, 11);
+  context.lineTo(-8, 29);
+  context.moveTo(5, 11);
+  context.lineTo(8, 29);
+  context.stroke();
+
+  // Uniform and armored vest.
+  fillPolygon([[-11, -9], [-6, -14], [7, -14], [12, -7], [9, 14], [-9, 14]], '#315f52');
+  context.fillStyle = '#1c3e42';
+  context.fillRect(-9, -6, 18, 12);
+  context.fillStyle = '#79d6a4';
+  context.fillRect(-7, -4, 14, 2);
+  context.fillStyle = '#162f3d';
+  context.fillRect(-9, 8, 18, 4);
+
+  // Bent arms and hands grip the weapon beside the rotating collar.
+  context.strokeStyle = '#315f52';
+  context.lineWidth = 6;
+  context.beginPath();
+  context.moveTo(8, -7);
+  context.lineTo(19, 3);
+  context.lineTo(28, 15);
+  context.moveTo(8, 1);
+  context.lineTo(20, 13);
+  context.lineTo(32, 16);
+  context.stroke();
+  context.fillStyle = '#d9a37a';
+  context.beginPath();
+  context.arc(28, 15, 3.5, 0, Math.PI * 2);
+  context.arc(32, 16, 3.5, 0, Math.PI * 2);
+  context.fill();
+
+  // Head, helmet, and dark visor face the incoming enemies.
+  context.fillStyle = '#d9a37a';
+  context.fillRect(-3, -16, 6, 5);
+  context.beginPath();
+  context.arc(0, -24, 8, 0, Math.PI * 2);
+  context.fill();
+  context.fillStyle = '#edf5f8';
+  context.beginPath();
+  context.arc(0, -26, 9, Math.PI, 0);
+  context.lineTo(9, -23);
+  context.lineTo(-9, -23);
+  context.closePath();
+  context.fill();
+  context.fillStyle = '#3b96dc';
+  context.fillRect(-9, -25, 18, 3);
+  context.fillStyle = '#17334d';
+  context.fillRect(1, -22, 7, 3);
+  context.restore();
+}
+
 function drawPlayer() {
   context.save();
   context.translate(player.x, player.y);
@@ -1542,6 +1643,8 @@ function drawPlayer() {
   context.fillRect(-22, 20, 44, 4);
   context.fillStyle = '#a9d9f5';
   context.fillRect(-12, 9, 24, 3);
+
+  drawGunner();
 
   context.save();
   context.rotate(player.angle);
