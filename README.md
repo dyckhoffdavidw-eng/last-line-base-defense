@@ -38,7 +38,7 @@ The executable is unsigned, so Windows SmartScreen may display a warning when it
 - P or Escape: pause/resume; the pause menu provides Armory access
 - Start next wave: use the button beside the Wave number after clearing a wave
 - Base stats: the full-width console at the bottom of the screen shows weapon damage, fire rate, critical stats, projectile upgrades, and base defenses, updating immediately when upgrades are purchased
-- Mikki: the named gunner sits atop and operates the equipped weapon, turning and recoiling in sync with every shot while his name label stays upright
+- Mikki: the named gunner sits atop the weapon with only his back visible, faces left or right with the gun, and shares its recoil while his name label stays upright
 
 ## Weapons
 

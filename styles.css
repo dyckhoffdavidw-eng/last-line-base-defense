@@ -224,7 +224,7 @@ kbd {
 #game-canvas {
   display: block;
   width: 100%;
-  height: clamp(340px, calc(100svh - 355px), 590px);
+  height: clamp(340px, calc(100svh - 415px), 590px);
   outline: none;
   cursor: crosshair;
   touch-action: none;
@@ -244,13 +244,13 @@ kbd {
 
 .base-stats-heading {
   display: flex;
-  padding: 7px 14px;
+  padding: 8px 14px;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
   border-bottom: 1px solid rgba(58, 169, 255, 0.25);
   background: #0a1a2b;
-  font-size: 0.62rem;
+  font-size: 0.72rem;
   font-weight: 750;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -258,22 +258,22 @@ kbd {
 
 .base-stats-heading strong {
   color: #8ee6ae;
-  font-size: 0.62rem;
+  font-size: 0.7rem;
 }
 
 .base-stats-list {
   display: grid;
   margin: 0;
-  padding: 5px 14px 8px;
-  grid-template-columns: repeat(auto-fit, minmax(125px, 1fr));
+  padding: 6px 14px 9px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   column-gap: 20px;
-  font-size: 0.62rem;
+  font-size: 0.72rem;
 }
 
 .base-stats-list div {
   display: flex;
   min-width: 0;
-  padding: 4px 0;
+  padding: 5px 0;
   justify-content: space-between;
   gap: 10px;
   border-bottom: 1px solid rgba(58, 169, 255, 0.12);
