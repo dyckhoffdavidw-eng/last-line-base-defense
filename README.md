@@ -2,6 +2,11 @@
 
 A browser and Windows desktop base-defense game.
 
+## Share with friends
+
+- **Browser:** send https://dyckhoffdavidw-eng.github.io/last-line-base-defense/ — no download or installation required.
+- **Windows:** send https://github.com/dyckhoffdavidw-eng/last-line-base-defense/releases/download/v1.2.0/Last-Line-1.2.0.exe — the standalone game runs without Node.js or Electron. The executable is unsigned, so Windows SmartScreen may display a warning when it is first opened.
+
 ## Play in a browser
 
 Open `index.html` in a modern browser. No installation is required.
@@ -32,6 +37,7 @@ The executable is unsigned, so Windows SmartScreen may display a warning when it
 - Space: fire with auto-aim
 - P or Escape: pause/resume; the pause menu provides Armory access
 - Start next wave: use the button beside the Wave number after clearing a wave
+- Base stats: scroll the live console on the front of the base for weapon damage, fire rate, critical stats, projectile upgrades, and base defenses
 
 ## Weapons
 
