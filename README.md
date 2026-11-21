@@ -30,7 +30,7 @@ The executable is unsigned, so Windows SmartScreen may display a warning when it
 - Mouse or touch: aim
 - Hold click or touch: fire
 - Space: fire with auto-aim
-- P or Escape: pause/resume
+- P or Escape: pause/resume; the pause menu provides Armory access
 
 ## Weapons
 
@@ -38,24 +38,30 @@ Unlock and equip weapons between waves:
 
 - **Rifle:** balanced single-shot weapon, available at gun level 1.
 - **Cannon:** unlocks at gun level 5; heavy shells with area splash damage and a slow fire rate.
-- **Twin machine gun:** unlocks at gun level 20; two barrels, rapid fire, and lower damage per bullet.
-- **Sniper:** unlocks at gun level 50; high-velocity rounds with high damage and three-target penetration.
-- **Laser:** unlocks at gun level 100; continuous, instant-hit beam. Gunnery skills increase its power; projectile skills do not apply.
+- **Twin machine gun:** unlocks at gun level 15; two barrels, rapid fire, and lower damage per bullet.
+- **Sniper:** unlocks at gun level 25; high-velocity rounds with high damage and three-target penetration.
+- **Laser:** unlocks at gun level 50; continuous, instant-hit beam. Gunnery skills increase its power; projectile skills do not apply.
+
+All weapons can be unlocked by gun level 50.
 
 Weapons require both the necessary gun level and a one-time gold unlock cost.
 
 ## Enemies and gun levels
 
 - **Fast:** low health and high speed.
-- **Tank:** slow armored enemy with high health and base damage.
+- **Tank:** appears from wave 20; slow armored enemy with high health and base damage.
 - **Splitter:** creates five mini-enemies when destroyed.
-- **Boss:** guaranteed every fifth wave, with high health, damage, gold, and XP.
-- Kills grant gun XP. The maximum gun level is 100. Leveling increases gun damage, and each level requires more XP.
-- Enemy health, damage, gold, and XP scale with both wave number and gun level.
+- **Boss:** guaranteed every fifth wave, with high health, damage, gold, and XP. The first boss has 26% less health than the standard boss scaling.
+- **Ranged:** appears from wave 5; stops at firing distance and shoots visible projectiles at the base.
+- **Shield:** appears from wave 15; projects a 110-pixel aura that reduces damage to itself and nearby allies by 55%.
+- **Healer:** appears from wave 10; restores 12% health to the most injured nearby ally every 2.4 seconds.
+- Kills grant gun XP. The maximum gun level is 100. Each level adds 3% gun damage and 1% firing speed, and each level requires more XP.
+- Enemy health, damage, gold, and XP scale with both wave number and gun level. Enemies gain an additional 6% health every five waves. Enemy takedowns and wave bonuses award 0.75× gold.
 
 ## Skill trees
 
-- **Gunnery:** three ranks each of bullet damage and fire rate.
-- **Base:** three ranks each of maximum-health plating and engineering. Engineering adds damage resistance and repairs after each wave.
-- **Projectile tech:** two ranks each of multishot, wall-bounce shots, and damage per meter traveled. One in-game meter is 100 pixels; the distance bonus is capped at +200%.
-- Later ranks require the previous rank and specific gun levels, spread through level 100. Damage, fire-rate bonuses, plating health, and engineering repairs scale with gun level. Gold comes from enemy takedowns and wave bonuses.
+- **Gunnery:** four bullet-damage ranks (+1 each), four fire-rate ranks (+0.6 shots/sec each), and two Single shot ranks, for 10 total ranks. Each Single shot rank adds 50% projectile damage but reduces fire rate by 20%. Focused Shot and Multishot are mutually exclusive upgrade paths.
+- **Base:** five ranks each of maximum-health plating and engineering, for 10 total ranks. Engineering adds damage resistance and repairs after each wave.
+- **Projectile tech:** four multishot ranks, three wall-bounce ranks, and three damage-per-meter ranks, for 10 total ranks. When Multishot is active, every weapon begins with one centered projectile that splits after traveling 120 pixels into 1 + Multishot rank projectiles, with a 0.12-radian spread between shots. Each rank multiplies projectile damage by 0.8. One in-game meter is 100 pixels; the distance bonus is capped at +200%.
+- **Laser tech:** five Penetration ranks and five Multi laser ranks, for 10 total ranks. The Laser must be equipped to purchase these upgrades. Each Penetration rank adds one target per beam, with 20% damage falloff per target. Each Multi laser rank adds a beam; secondary beams deal 45% damage.
+- Later ranks require only the previous rank and gold; there are no gun-level requirements. Rank-one upgrades cost 75 gold; later ranks cost 200 × their rank number (400, 600, and so on). Damage, fire-rate bonuses, plating health, and engineering repairs scale with gun level. Gold comes from enemy takedowns and wave bonuses. The Armory is available between waves and from the pause menu.
