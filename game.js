@@ -62,6 +62,7 @@ const BASE_CRIT_DAMAGE_MULTIPLIER = 1.5;
 const CRIT_DAMAGE_PER_RANK = 0.25;
 const EXPLOSIVE_ROUNDS_RADIUS = 50;
 const EXPLOSIVE_DAMAGE_PER_RANK = 0.1;
+const GUNNER_SCALE = 1.05;
 const SKILL_RANKS_PER_BRANCH = 10;
 const skillRankNumerals = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
 
@@ -1568,10 +1569,10 @@ function drawEquippedWeapon() {
   }
 }
 
-function drawGunner() {
+function drawGunner(facingDirection) {
   context.save();
-  context.translate(-10, -24);
-  context.scale(0.82, 0.82);
+  context.translate(0, -28);
+  context.scale(facingDirection * GUNNER_SCALE, GUNNER_SCALE);
   context.lineCap = 'round';
 
   // Bent legs straddle the weapon in a seated operating position.
@@ -1595,7 +1596,7 @@ function drawGunner() {
   context.fillStyle = '#162f3d';
   context.fillRect(-9, 8, 18, 4);
 
-  // Bent arms and hands grip the weapon beside the rotating collar.
+  // Bent arms and hands grip the weapon controls.
   context.strokeStyle = '#315f52';
   context.lineWidth = 6;
   context.beginPath();
@@ -1612,7 +1613,7 @@ function drawGunner() {
   context.arc(32, 16, 3.5, 0, Math.PI * 2);
   context.fill();
 
-  // Head, helmet, and dark visor face the incoming enemies.
+  // Rear-facing head and helmet show no facial features.
   context.fillStyle = '#d9a37a';
   context.fillRect(-3, -16, 6, 5);
   context.beginPath();
@@ -1620,24 +1621,16 @@ function drawGunner() {
   context.fill();
   context.fillStyle = '#edf5f8';
   context.beginPath();
-  context.arc(0, -26, 9, Math.PI, 0);
-  context.lineTo(9, -23);
-  context.lineTo(-9, -23);
-  context.closePath();
+  context.arc(0, -26, 9, 0, Math.PI * 2);
   context.fill();
   context.fillStyle = '#3b96dc';
-  context.fillRect(-9, -25, 18, 3);
-  context.fillStyle = '#17334d';
-  context.fillRect(1, -22, 7, 3);
-  context.save();
-  context.translate(0, -41);
-  context.rotate(-player.angle);
-  context.scale(1 / 0.82, 1 / 0.82);
-  context.fillStyle = '#ffd166';
-  context.font = '800 11px system-ui';
-  context.textAlign = 'center';
-  context.fillText('MIKKI', 0, 0);
-  context.restore();
+  context.fillRect(-8, -27, 16, 5);
+  context.strokeStyle = '#a9d9f5';
+  context.lineWidth = 1.5;
+  context.beginPath();
+  context.moveTo(0, -34);
+  context.lineTo(0, -18);
+  context.stroke();
   context.restore();
 }
 
@@ -1665,30 +1658,20 @@ function drawPlayer() {
   context.rotate(player.angle);
   context.translate(-gunRecoil * 5, 0);
   drawEquippedWeapon();
-  drawGunner();
   context.restore();
 
-  // Clean white-and-blue rotating collar.
-  context.fillStyle = '#f4f9fc';
-  context.beginPath();
-  context.arc(0, 0, 18, 0, Math.PI * 2);
-  context.fill();
-  context.strokeStyle = '#75b9e8';
-  context.lineWidth = 2;
-  context.stroke();
-  context.fillStyle = '#173b5c';
-  context.beginPath();
-  context.arc(0, 0, 12, 0, Math.PI * 2);
-  context.fill();
-  context.strokeStyle = '#43a5eb';
-  context.lineWidth = 3;
-  context.beginPath();
-  context.arc(0, 0, 14, -Math.PI * 0.85, Math.PI * 0.15);
-  context.stroke();
-  context.fillStyle = '#ffffff';
-  context.beginPath();
-  context.arc(0, 0, 4, 0, Math.PI * 2);
-  context.fill();
+  // Mikki stays upright, faces the gun's horizontal direction, and shares its recoil.
+  const recoilDistance = -gunRecoil * 5;
+  const recoilX = Math.cos(player.angle) * recoilDistance;
+  const recoilY = Math.sin(player.angle) * recoilDistance;
+  context.save();
+  context.translate(recoilX, recoilY);
+  drawGunner(Math.cos(player.angle) >= 0 ? 1 : -1);
+  context.restore();
+  context.fillStyle = '#ffd166';
+  context.font = '800 13px system-ui';
+  context.textAlign = 'center';
+  context.fillText('MIKKI', recoilX, -72 + recoilY);
   context.restore();
 }
 
