@@ -332,6 +332,24 @@ kbd {
   background: var(--accent-light);
 }
 
+.button--secondary {
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--text);
+}
+
+.button--secondary:hover {
+  border-color: var(--accent);
+  background: var(--panel-light);
+}
+
+.pause-actions {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 10px;
+}
+
 button:focus-visible {
   outline: 3px solid rgba(88, 214, 141, 0.3);
   outline-offset: 3px;
@@ -469,6 +487,18 @@ button:focus-visible {
   border: 1px solid var(--border);
   border-radius: 12px;
   background: rgba(17, 25, 20, 0.85);
+}
+
+.skill-tree--laser {
+  grid-column: 1 / -1;
+}
+
+.skill-tree--laser .skill-branches {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.skill-tree--gun .skill-branches {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .skill-tree--projectiles {

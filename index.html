@@ -71,13 +71,16 @@
         <div class="overlay-card overlay-card--compact">
           <p class="eyebrow">Take a breath</p>
           <h2>Paused</h2>
-          <button class="button button--primary" id="resume-button" type="button">Resume defense</button>
+          <div class="pause-actions">
+            <button class="button button--primary" id="resume-button" type="button">Resume defense</button>
+            <button class="button button--secondary" id="pause-armory-button" type="button">Open armory</button>
+          </div>
         </div>
       </div>
 
       <div class="overlay" id="upgrade-overlay" hidden>
         <div class="overlay-card overlay-card--upgrades">
-          <p class="eyebrow">Wave cleared</p>
+          <p class="eyebrow" id="upgrade-eyebrow">Wave cleared</p>
           <h2>Armory</h2>
           <p class="upgrade-balance">Available gold: <strong id="upgrade-credits">0</strong></p>
           <div class="upgrade-tabs" aria-label="Armory sections">
@@ -93,26 +96,33 @@
           </section>
           <section id="skills-panel" hidden>
             <div class="skill-trees">
-              <section class="skill-tree" aria-labelledby="gun-tree-title">
+              <section class="skill-tree skill-tree--gun" aria-labelledby="gun-tree-title">
                 <div class="tree-heading">
                   <span class="tree-icon" aria-hidden="true">↑</span>
-                  <div><h3 id="gun-tree-title">Gunnery</h3><p>Shared weapon skills</p></div>
+                  <div><h3 id="gun-tree-title">Gunnery</h3><p>10 ranks · Shared weapon skills</p></div>
                 </div>
                 <div class="skill-branches" id="gun-branches"></div>
               </section>
               <section class="skill-tree" aria-labelledby="base-tree-title">
                 <div class="tree-heading">
                   <span class="tree-icon" aria-hidden="true">+</span>
-                  <div><h3 id="base-tree-title">Base</h3><p>Defense systems</p></div>
+                  <div><h3 id="base-tree-title">Base</h3><p>10 ranks · Defense systems</p></div>
                 </div>
                 <div class="skill-branches" id="base-branches"></div>
               </section>
               <section class="skill-tree skill-tree--projectiles" aria-labelledby="projectile-tree-title">
                 <div class="tree-heading">
                   <span class="tree-icon" aria-hidden="true">✦</span>
-                  <div><h3 id="projectile-tree-title">Projectile tech</h3><p>Applies to rifles, cannons, machine guns, and snipers</p></div>
+                  <div><h3 id="projectile-tree-title">Projectile tech</h3><p>10 ranks · Applies to rifles, cannons, machine guns, and snipers</p></div>
                 </div>
                 <div class="skill-branches" id="projectile-branches"></div>
+              </section>
+              <section class="skill-tree skill-tree--laser" aria-labelledby="laser-tree-title">
+                <div class="tree-heading">
+                  <span class="tree-icon" aria-hidden="true">≋</span>
+                  <div><h3 id="laser-tree-title">Laser tech</h3><p>10 ranks · Penetration and multiple beams</p></div>
+                </div>
+                <div class="skill-branches" id="laser-branches"></div>
               </section>
             </div>
           </section>
