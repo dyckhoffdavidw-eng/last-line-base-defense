@@ -459,18 +459,20 @@ function shoot() {
   const weapon = equippedWeapon();
   const singleShotActive = skillLevels.singleShot > 0;
   const projectileCount = singleShotActive || skillLevels.multishot > 0 ? 1 : weapon.projectiles;
+  const twinBarrelsActive = weapon.id === 'machinegun' && !singleShotActive && skillLevels.multishot === 0;
   const muzzleDistance = weaponMuzzleDistances[currentWeapon];
   const muzzleX = player.x + Math.cos(player.angle) * muzzleDistance;
   const muzzleY = player.y + Math.sin(player.angle) * muzzleDistance;
 
   for (let index = 0; index < projectileCount; index += 1) {
     const offset = index - (projectileCount - 1) / 2;
-    const angle = player.angle + offset * 0.12;
-    const perpendicularOffset = weapon.id === 'machinegun' && !singleShotActive && skillLevels.multishot === 0 ? (index % 2 === 0 ? -7.5 : 7.5) : 0;
+    const angle = twinBarrelsActive ? player.angle : player.angle + offset * 0.12;
+    const perpendicularOffset = twinBarrelsActive ? (index === 0 ? -7.5 : 7.5) : 0;
     const perpendicularX = Math.cos(player.angle + Math.PI / 2) * perpendicularOffset;
     const perpendicularY = Math.sin(player.angle + Math.PI / 2) * perpendicularOffset;
     const x = muzzleX + perpendicularX;
     const y = muzzleY + perpendicularY;
+    if (twinBarrelsActive) addParticles(x, y, '#ffd166', 4, 45);
 
     bullets.push({
       x,
@@ -493,7 +495,7 @@ function shoot() {
   }
 
   fireCooldown = 1 / fireRate();
-  addParticles(muzzleX, muzzleY, '#ffd166', Math.min(6, projectileCount + 2), 45);
+  if (!twinBarrelsActive) addParticles(muzzleX, muzzleY, '#ffd166', Math.min(6, projectileCount + 2), 45);
 }
 
 function splitBulletIfReady(index) {

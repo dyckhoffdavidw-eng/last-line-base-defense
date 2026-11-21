@@ -38,7 +38,7 @@ Unlock and equip weapons between waves:
 
 - **Rifle:** balanced single-shot weapon, available at gun level 1.
 - **Cannon:** unlocks at gun level 5; heavy shells with area splash damage and a slow fire rate.
-- **Twin machine gun:** unlocks at gun level 15; two barrels, rapid fire, and lower damage per bullet.
+- **Twin machine gun:** unlocks at gun level 15; fires parallel shots with visible muzzle flashes from both barrels, with rapid fire and lower damage per bullet.
 - **Sniper:** unlocks at gun level 25; high-velocity rounds with high damage and three-target penetration.
 - **Laser:** unlocks at gun level 50; continuous, instant-hit beam. Gunnery skills increase its power; projectile skills do not apply.
 
