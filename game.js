@@ -146,6 +146,7 @@ let particles = [];
 let spawnRemaining = 0;
 let spawnTimer = 0;
 let fireCooldown = 0;
+let gunRecoil = 0;
 let firing = false;
 let spaceFiring = false;
 let screenShake = 0;
@@ -329,6 +330,7 @@ function startGame() {
   enemyProjectiles = [];
   particles = [];
   fireCooldown = 0;
+  gunRecoil = 0;
   firing = false;
   spaceFiring = false;
   screenShake = 0;
@@ -343,6 +345,7 @@ function startWave(number) {
   bossSpawned = false;
   spawnTimer = 0.6;
   fireCooldown = 0;
+  gunRecoil = 0;
   laserBeam = null;
   enemyProjectiles = [];
   state = 'playing';
@@ -559,6 +562,7 @@ function shoot() {
   }
 
   fireCooldown = 1 / fireRate();
+  gunRecoil = 1;
   if (!twinBarrelsActive) addParticles(muzzleX, muzzleY, '#ffd166', Math.min(6, projectileCount + 2), 45);
 }
 
@@ -1197,6 +1201,7 @@ function update(deltaTime) {
     if (particle.life <= 0) particles.splice(index, 1);
   }
 
+  gunRecoil = Math.max(0, gunRecoil - deltaTime * 10);
   screenShake = Math.max(0, screenShake - deltaTime * 30);
   levelUpTimer = Math.max(0, levelUpTimer - deltaTime);
 
@@ -1624,10 +1629,15 @@ function drawGunner() {
   context.fillRect(-9, -25, 18, 3);
   context.fillStyle = '#17334d';
   context.fillRect(1, -22, 7, 3);
+  context.save();
+  context.translate(0, -41);
+  context.rotate(-player.angle);
+  context.scale(1 / 0.82, 1 / 0.82);
   context.fillStyle = '#ffd166';
   context.font = '800 11px system-ui';
   context.textAlign = 'center';
-  context.fillText('MIKKI', 0, -41);
+  context.fillText('MIKKI', 0, 0);
+  context.restore();
   context.restore();
 }
 
@@ -1653,10 +1663,10 @@ function drawPlayer() {
 
   context.save();
   context.rotate(player.angle);
+  context.translate(-gunRecoil * 5, 0);
   drawEquippedWeapon();
-  context.restore();
-
   drawGunner();
+  context.restore();
 
   // Clean white-and-blue rotating collar.
   context.fillStyle = '#f4f9fc';
