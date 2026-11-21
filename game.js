@@ -41,6 +41,11 @@ const GOLD_REWARD_MULTIPLIER = 0.75;
 const BASE_BOUNCE_RANGE = 140;
 const BOUNCE_RANGE_PER_RANK = 30;
 const BOUNCE_DAMAGE_MULTIPLIER = 0.6;
+const CRIT_CHANCE_PER_RANK = 0.03;
+const BASE_CRIT_DAMAGE_MULTIPLIER = 1.5;
+const CRIT_DAMAGE_PER_RANK = 0.25;
+const EXPLOSIVE_ROUNDS_RADIUS = 50;
+const EXPLOSIVE_DAMAGE_PER_RANK = 0.1;
 const SKILL_RANKS_PER_BRANCH = 10;
 const skillRankNumerals = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
 
@@ -61,26 +66,29 @@ function defineSkillBranch(idPrefix, tree, branch, stat, name, description) {
 }
 
 const skillDefinitions = [
-  // Gunnery: 3 branches with 10 ranks each
+  // Gunnery: 5 branches with 10 ranks each
   ...defineSkillBranch('gun-damage', 'gun', 'Damage', 'damage', 'High-Caliber', '+1 bullet damage'),
   ...defineSkillBranch('gun-rate', 'gun', 'Fire rate', 'rate', 'Rapid Fire', '+0.6 base shots / second'),
   ...defineSkillBranch('gun-single', 'gun', 'Single shot', 'singleShot', 'Focused Shot', '+50% damage, -20% fire rate, no splitting'),
+  ...defineSkillBranch('gun-crit-chance', 'gun', 'Crit chance', 'critChance', 'Crit Chance', '+3% critical chance'),
+  ...defineSkillBranch('gun-crit-amount', 'gun', 'Crit amount', 'critAmount', 'Crit Amount', '+25% critical damage'),
 
   // Base: 2 branches with 10 ranks each
   ...defineSkillBranch('base-plating', 'base', 'Plating', 'plating', 'Reinforced', '+20 base max health'),
   ...defineSkillBranch('base-engineering', 'base', 'Engineering', 'engineering', 'Engineering', '+6 base wave repair, +8% resist'),
 
-  // Projectile tech: 4 branches with 10 ranks each
-  ...defineSkillBranch('projectile-multi', 'projectile', 'Multishot', 'multishot', 'Multishot', '+1 projectile per shot'),
+  // Projectile tech: 5 branches with 10 ranks each
+  ...defineSkillBranch('projectile-multi', 'projectile', 'Split shot', 'multishot', 'Split Shot', '+1 projectile per split'),
   ...defineSkillBranch('projectile-bounce', 'projectile', 'Bounce shot', 'bounce', 'Bounce Shot', '+1 enemy bounce; bounced hits deal 60% damage'),
   ...defineSkillBranch('projectile-bounce-range', 'projectile', 'Bounce range', 'bounceRange', 'Bounce Range', '+30 bounce range'),
+  ...defineSkillBranch('projectile-explosive', 'projectile', 'Explosive rounds', 'explosiveRounds', 'Explosive Rounds', '50 px explosion; +10% splash damage'),
   ...defineSkillBranch('projectile-distance', 'projectile', 'Damage / meter', 'distance', 'Longshot', '+0.15% damage per meter'),
 
   // Laser tech: 2 branches with 10 ranks each
   ...defineSkillBranch('laser-penetration', 'laser', 'Penetration', 'laserPenetration', 'Phase Piercer', '+1 target per beam; 20% damage falloff'),
   ...defineSkillBranch('laser-multi', 'laser', 'Multi laser', 'multiLaser', 'Split Emitter', '+1 beam; secondary beams deal 45% damage')
 ];
-const skillLevels = { damage: 0, rate: 0, singleShot: 0, plating: 0, engineering: 0, multishot: 0, bounce: 0, bounceRange: 0, distance: 0, laserPenetration: 0, multiLaser: 0 };
+const skillLevels = { damage: 0, rate: 0, singleShot: 0, critChance: 0, critAmount: 0, plating: 0, engineering: 0, multishot: 0, bounce: 0, bounceRange: 0, explosiveRounds: 0, distance: 0, laserPenetration: 0, multiLaser: 0 };
 const skillNodes = new Map();
 const weaponDefinitions = [
   { id: 'rifle', name: 'Rifle', icon: '●', cost: 0, requiredLevel: 1, description: 'Balanced single-shot rifle. Uses every projectile skill.', damageMultiplier: 1, rateMultiplier: 1, speed: 700, projectiles: 1, splash: 0, pierce: 1, radius: 4 },
@@ -170,10 +178,26 @@ function enemyRewardScale() {
   return 1 + (wave - 1) * 0.18 + (gunLevel - 1) * 0.08;
 }
 
+function splitShotRank() {
+  return currentWeapon === 'machinegun' ? 0 : skillLevels.multishot;
+}
+
+function criticalChance() {
+  return skillLevels.critChance * CRIT_CHANCE_PER_RANK;
+}
+
+function criticalDamageMultiplier() {
+  return BASE_CRIT_DAMAGE_MULTIPLIER + skillLevels.critAmount * CRIT_DAMAGE_PER_RANK;
+}
+
+function explosiveRoundsDamage() {
+  return skillLevels.explosiveRounds * EXPLOSIVE_DAMAGE_PER_RANK;
+}
+
 function bulletDamage() {
-  const multishotDamageMultiplier = skillLevels.singleShot > 0 ? 1 : 0.8 ** skillLevels.multishot;
+  const splitShotDamageMultiplier = skillLevels.singleShot > 0 ? 1 : 0.8 ** splitShotRank();
   const singleShotDamageMultiplier = 1 + skillLevels.singleShot * 0.5;
-  return (1 + skillLevels.damage) * gunLevelDamageMultiplier() * (equippedWeapon().damageMultiplier || 1) * multishotDamageMultiplier * singleShotDamageMultiplier;
+  return (1 + skillLevels.damage) * gunLevelDamageMultiplier() * (equippedWeapon().damageMultiplier || 1) * splitShotDamageMultiplier * singleShotDamageMultiplier;
 }
 
 function fireRate() {
@@ -453,7 +477,8 @@ function shoot() {
   const weapon = equippedWeapon();
   const singleShotActive = skillLevels.singleShot > 0;
   const twinBarrelsActive = weapon.id === 'machinegun';
-  const projectileCount = twinBarrelsActive ? weapon.projectiles : singleShotActive || skillLevels.multishot > 0 ? 1 : weapon.projectiles;
+  const splitRank = splitShotRank();
+  const projectileCount = twinBarrelsActive ? weapon.projectiles : singleShotActive || splitRank > 0 ? 1 : weapon.projectiles;
   const muzzleDistance = weaponMuzzleDistances[currentWeapon];
   const muzzleX = player.x + Math.cos(player.angle) * muzzleDistance;
   const muzzleY = player.y + Math.sin(player.angle) * muzzleDistance;
@@ -467,6 +492,7 @@ function shoot() {
     const x = muzzleX + perpendicularX;
     const y = muzzleY + perpendicularY;
     if (twinBarrelsActive) addParticles(x, y, '#ffd166', 4, 45);
+    const critical = Math.random() < criticalChance();
 
     bullets.push({
       x,
@@ -476,16 +502,18 @@ function shoot() {
       vx: Math.cos(angle) * weapon.speed,
       vy: Math.sin(angle) * weapon.speed,
       radius: weapon.radius,
-      damage: bulletDamage(),
+      damage: bulletDamage() * (critical ? criticalDamageMultiplier() : 1),
+      critical,
       distanceTraveled: 0,
       bouncesRemaining: skillLevels.bounce,
       bounceRange: BASE_BOUNCE_RANGE + skillLevels.bounceRange * BOUNCE_RANGE_PER_RANK,
       bounceCount: 0,
       hitsRemaining: weapon.pierce,
-      splash: weapon.splash,
+      splash: Math.max(weapon.splash, skillLevels.explosiveRounds > 0 ? EXPLOSIVE_ROUNDS_RADIUS : 0),
+      splashDamageMultiplier: (weapon.splash > 0 ? 0.65 : 0) + explosiveRoundsDamage(),
       hitEnemyIds: [],
       kind: weapon.id,
-      splitCount: singleShotActive ? 0 : skillLevels.multishot,
+      splitCount: singleShotActive ? 0 : splitRank,
       splitDistance: 120
     });
   }
@@ -747,7 +775,8 @@ function updateLaser(deltaTime) {
   };
 
   for (const beam of beams) {
-    const beamDamage = laserDamagePerSecond() * deltaTime * (beam.isPrimary ? 1 : 0.45);
+    const critical = Math.random() < criticalChance();
+    const beamDamage = laserDamagePerSecond() * deltaTime * (beam.isPrimary ? 1 : 0.45) * (critical ? criticalDamageMultiplier() : 1);
     for (let hitIndex = 0; hitIndex < beam.hits.length; hitIndex += 1) {
       const hit = beam.hits[hitIndex];
       const targetIndex = enemies.findIndex((enemy) => enemy.id === hit.enemy.id);
@@ -888,9 +917,9 @@ function selectWeapon(weaponId) {
 
 function buildSkillTrees() {
   const trees = [
-    { container: gunBranches, tree: 'gun', branches: ['Damage', 'Fire rate', 'Single shot'] },
+    { container: gunBranches, tree: 'gun', branches: ['Damage', 'Fire rate', 'Single shot', 'Crit chance', 'Crit amount'] },
     { container: baseBranches, tree: 'base', branches: ['Plating', 'Engineering'] },
-    { container: projectileBranches, tree: 'projectile', branches: ['Multishot', 'Bounce shot', 'Bounce range', 'Damage / meter'] },
+    { container: projectileBranches, tree: 'projectile', branches: ['Split shot', 'Bounce shot', 'Bounce range', 'Explosive rounds', 'Damage / meter'] },
     { container: laserBranches, tree: 'laser', branches: ['Penetration', 'Multi laser'] }
   ];
 
@@ -924,8 +953,9 @@ function buildSkillTrees() {
 }
 
 function skillPathLock(skill) {
+  if (skill.stat === 'multishot' && currentWeapon === 'machinegun') return 'Twin machine gun';
   if (skill.stat === 'multishot' && skillLevels.singleShot > 0) return 'Focused Shot';
-  if (skill.stat === 'singleShot' && skillLevels.multishot > 0) return 'Multishot';
+  if (skill.stat === 'singleShot' && skillLevels.multishot > 0) return 'Split Shot';
   return null;
 }
 
@@ -1097,7 +1127,7 @@ function update(deltaTime) {
             const splashEnemy = enemies[splashIndex];
             const splashDistance = Math.hypot(splashEnemy.x - enemy.x, splashEnemy.y - enemy.y);
             if (splashEnemy.id !== enemy.id && splashDistance <= bullet.splash + splashEnemy.radius) {
-              damageEnemyAtIndex(splashIndex, damage * 0.65, splashEnemy.x, splashEnemy.y);
+              damageEnemyAtIndex(splashIndex, damage * bullet.splashDamageMultiplier, splashEnemy.x, splashEnemy.y);
             }
           }
         }
@@ -1727,7 +1757,7 @@ function render() {
   }
 
   for (const bullet of bullets) {
-    context.strokeStyle = bullet.kind === 'cannon' ? '#ffb454' : bullet.kind === 'sniper' ? '#d9ffe5' : '#ffd166';
+    context.strokeStyle = bullet.critical ? '#ff8ef2' : bullet.kind === 'cannon' ? '#ffb454' : bullet.kind === 'sniper' ? '#d9ffe5' : '#ffd166';
     context.lineWidth = bullet.kind === 'cannon' ? 6 : bullet.kind === 'sniper' ? 2 : 3;
     context.beginPath();
     context.moveTo(bullet.x, bullet.y);
