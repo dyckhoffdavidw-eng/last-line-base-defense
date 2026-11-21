@@ -448,8 +448,8 @@ function addParticles(x, y, color, count = 6, speed = 90) {
 function shoot() {
   const weapon = equippedWeapon();
   const singleShotActive = skillLevels.singleShot > 0;
-  const projectileCount = singleShotActive || skillLevels.multishot > 0 ? 1 : weapon.projectiles;
-  const twinBarrelsActive = weapon.id === 'machinegun' && !singleShotActive && skillLevels.multishot === 0;
+  const twinBarrelsActive = weapon.id === 'machinegun';
+  const projectileCount = twinBarrelsActive ? weapon.projectiles : singleShotActive || skillLevels.multishot > 0 ? 1 : weapon.projectiles;
   const muzzleDistance = weaponMuzzleDistances[currentWeapon];
   const muzzleX = player.x + Math.cos(player.angle) * muzzleDistance;
   const muzzleY = player.y + Math.sin(player.angle) * muzzleDistance;

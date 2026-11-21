@@ -39,7 +39,7 @@ Unlock and equip weapons between waves:
 
 - **Rifle:** balanced single-shot weapon, available at gun level 1.
 - **Cannon:** unlocks at gun level 5; heavy shells with area splash damage and a slow fire rate.
-- **Twin machine gun:** unlocks at gun level 15; fires parallel shots with visible muzzle flashes from both barrels, with rapid fire and lower damage per bullet.
+- **Twin machine gun:** unlocks at gun level 15; always fires parallel shots with visible muzzle flashes from both barrels, including with Focused Shot or Multishot upgrades, with rapid fire and lower damage per bullet.
 - **Sniper:** unlocks at gun level 25; high-velocity rounds with high damage and three-target penetration.
 - **Laser:** unlocks at gun level 50; continuous, instant-hit beam. Gunnery skills increase its power; projectile skills do not apply.
 
@@ -63,6 +63,6 @@ Weapons require both the necessary gun level and a one-time gold unlock cost.
 
 - **Gunnery:** 10 bullet-damage ranks (+1 each), 10 fire-rate ranks (+0.6 shots/sec each), and 10 Single shot ranks, for 30 total ranks. Each Single shot rank adds 50% projectile damage and multiplies fire rate by 0.8, with the fire-rate penalty compounding across ranks. Focused Shot and Multishot are mutually exclusive upgrade paths.
 - **Base:** 10 ranks each of maximum-health plating and engineering, for 20 total ranks. Engineering adds damage resistance and repairs after each wave.
-- **Projectile tech:** 10 multishot ranks, 10 wall-bounce ranks, and 10 damage-per-meter ranks, for 30 total ranks. When Multishot is active, every weapon begins with one centered projectile that splits after traveling 120 pixels into 1 + Multishot rank projectiles, with a 0.12-radian spread between shots. Each rank multiplies projectile damage by 0.8. One in-game meter is 100 pixels; the distance bonus is capped at +200%.
+- **Projectile tech:** 10 multishot ranks, 10 wall-bounce ranks, and 10 damage-per-meter ranks, for 30 total ranks. When Multishot is active, single-barrel weapons begin with one centered projectile that splits after traveling 120 pixels into 1 + Multishot rank projectiles, with a 0.12-radian spread between shots. The twin machine gun instead fires one projectile from each barrel, and both projectiles split. Each rank multiplies projectile damage by 0.8. One in-game meter is 100 pixels; the distance bonus is capped at +200%.
 - **Laser tech:** 10 Penetration ranks and 10 Multi laser ranks, for 20 total ranks. The Laser must be equipped to purchase these upgrades. Each Penetration rank adds one target per beam, with 20% damage falloff per target. Each Multi laser rank adds a beam; secondary beams deal 45% damage.
 - There are 100 total upgrades across 10 branches. Later ranks require only the previous rank and gold; there are no gun-level requirements. Rank-one upgrades cost 75 gold; later ranks cost 200 × their rank number (400, 600, and so on through rank 10 at 2,000 gold). Damage, fire-rate bonuses, plating health, and engineering repairs scale with gun level. Gold comes from enemy takedowns and wave bonuses. The Armory is available between waves and from the pause menu.
