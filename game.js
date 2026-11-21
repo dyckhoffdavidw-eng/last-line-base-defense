@@ -38,6 +38,9 @@ const BASE_HEALTH = 100;
 const MAX_GUN_LEVEL = 100;
 const PIXELS_PER_METER = 100;
 const GOLD_REWARD_MULTIPLIER = 0.75;
+const BASE_BOUNCE_RANGE = 140;
+const BOUNCE_RANGE_PER_RANK = 30;
+const BOUNCE_DAMAGE_MULTIPLIER = 0.6;
 const SKILL_RANKS_PER_BRANCH = 10;
 const skillRankNumerals = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
 
@@ -67,16 +70,17 @@ const skillDefinitions = [
   ...defineSkillBranch('base-plating', 'base', 'Plating', 'plating', 'Reinforced', '+20 base max health'),
   ...defineSkillBranch('base-engineering', 'base', 'Engineering', 'engineering', 'Engineering', '+6 base wave repair, +8% resist'),
 
-  // Projectile tech: 3 branches with 10 ranks each
+  // Projectile tech: 4 branches with 10 ranks each
   ...defineSkillBranch('projectile-multi', 'projectile', 'Multishot', 'multishot', 'Multishot', '+1 projectile per shot'),
-  ...defineSkillBranch('projectile-bounce', 'projectile', 'Bounce shot', 'bounce', 'Ricochet', '+1 wall bounce'),
-  ...defineSkillBranch('projectile-distance', 'projectile', 'Damage / meter', 'distance', 'Longshot', '+20% damage per meter'),
+  ...defineSkillBranch('projectile-bounce', 'projectile', 'Bounce shot', 'bounce', 'Bounce Shot', '+1 enemy bounce; bounced hits deal 60% damage'),
+  ...defineSkillBranch('projectile-bounce-range', 'projectile', 'Bounce range', 'bounceRange', 'Bounce Range', '+30 bounce range'),
+  ...defineSkillBranch('projectile-distance', 'projectile', 'Damage / meter', 'distance', 'Longshot', '+0.15% damage per meter'),
 
   // Laser tech: 2 branches with 10 ranks each
   ...defineSkillBranch('laser-penetration', 'laser', 'Penetration', 'laserPenetration', 'Phase Piercer', '+1 target per beam; 20% damage falloff'),
   ...defineSkillBranch('laser-multi', 'laser', 'Multi laser', 'multiLaser', 'Split Emitter', '+1 beam; secondary beams deal 45% damage')
 ];
-const skillLevels = { damage: 0, rate: 0, singleShot: 0, plating: 0, engineering: 0, multishot: 0, bounce: 0, distance: 0, laserPenetration: 0, multiLaser: 0 };
+const skillLevels = { damage: 0, rate: 0, singleShot: 0, plating: 0, engineering: 0, multishot: 0, bounce: 0, bounceRange: 0, distance: 0, laserPenetration: 0, multiLaser: 0 };
 const skillNodes = new Map();
 const weaponDefinitions = [
   { id: 'rifle', name: 'Rifle', icon: '●', cost: 0, requiredLevel: 1, description: 'Balanced single-shot rifle. Uses every projectile skill.', damageMultiplier: 1, rateMultiplier: 1, speed: 700, projectiles: 1, splash: 0, pierce: 1, radius: 4 },
@@ -475,6 +479,8 @@ function shoot() {
       damage: bulletDamage(),
       distanceTraveled: 0,
       bouncesRemaining: skillLevels.bounce,
+      bounceRange: BASE_BOUNCE_RANGE + skillLevels.bounceRange * BOUNCE_RANGE_PER_RANK,
+      bounceCount: 0,
       hitsRemaining: weapon.pierce,
       splash: weapon.splash,
       hitEnemyIds: [],
@@ -534,8 +540,51 @@ function pointSegmentDistanceSquared(px, py, x1, y1, x2, y2) {
 
 function projectileDamage(bullet) {
   const meters = bullet.distanceTraveled / PIXELS_PER_METER;
-  const distanceBonus = Math.min(2, meters * skillLevels.distance * 0.2);
+  const distanceBonus = Math.min(2, meters * skillLevels.distance * 0.0015);
   return bullet.damage * (1 + distanceBonus);
+}
+
+function findBounceTarget(bullet, hitEnemy) {
+  const speed = Math.hypot(bullet.vx, bullet.vy);
+  if (speed === 0) return null;
+  const directionX = bullet.vx / speed;
+  const directionY = bullet.vy / speed;
+  let nearestTarget = null;
+  let nearestDistance = Infinity;
+
+  for (const candidate of enemies) {
+    if (bullet.hitEnemyIds.includes(candidate.id)) continue;
+    const dx = candidate.x - hitEnemy.x;
+    const dy = candidate.y - hitEnemy.y;
+    const distance = Math.hypot(dx, dy);
+    const forwardDistance = dx * directionX + dy * directionY;
+    if (distance === 0 || distance > bullet.bounceRange || forwardDistance <= 0 || distance >= nearestDistance) continue;
+    nearestTarget = candidate;
+    nearestDistance = distance;
+  }
+
+  return nearestTarget;
+}
+
+function bounceBulletToNextEnemy(bullet, hitEnemy) {
+  if (bullet.bouncesRemaining <= 0) return false;
+  const target = findBounceTarget(bullet, hitEnemy);
+  if (!target) return false;
+
+  const speed = Math.hypot(bullet.vx, bullet.vy);
+  const dx = target.x - hitEnemy.x;
+  const dy = target.y - hitEnemy.y;
+  const distance = Math.hypot(dx, dy);
+  bullet.x = hitEnemy.x;
+  bullet.y = hitEnemy.y;
+  bullet.previousX = hitEnemy.x;
+  bullet.previousY = hitEnemy.y;
+  bullet.vx = dx / distance * speed;
+  bullet.vy = dy / distance * speed;
+  bullet.bouncesRemaining -= 1;
+  bullet.bounceCount += 1;
+  addParticles(hitEnemy.x, hitEnemy.y, '#9fd9ff', 6, 70);
+  return true;
 }
 
 function shieldProviderFor(enemy) {
@@ -841,7 +890,7 @@ function buildSkillTrees() {
   const trees = [
     { container: gunBranches, tree: 'gun', branches: ['Damage', 'Fire rate', 'Single shot'] },
     { container: baseBranches, tree: 'base', branches: ['Plating', 'Engineering'] },
-    { container: projectileBranches, tree: 'projectile', branches: ['Multishot', 'Bounce shot', 'Damage / meter'] },
+    { container: projectileBranches, tree: 'projectile', branches: ['Multishot', 'Bounce shot', 'Bounce range', 'Damage / meter'] },
     { container: laserBranches, tree: 'laser', branches: ['Penetration', 'Multi laser'] }
   ];
 
@@ -987,19 +1036,6 @@ function update(deltaTime) {
     bullet.distanceTraveled += Math.hypot(bullet.vx, bullet.vy) * deltaTime;
     if (splitBulletIfReady(index)) continue;
 
-    if (bullet.bouncesRemaining > 0) {
-      if ((bullet.x <= bullet.radius && bullet.vx < 0) || (bullet.x >= width - bullet.radius && bullet.vx > 0)) {
-        bullet.vx *= -1;
-        bullet.x = Math.max(bullet.radius, Math.min(width - bullet.radius, bullet.x));
-        bullet.bouncesRemaining -= 1;
-      }
-      if (bullet.bouncesRemaining > 0 && bullet.y <= bullet.radius && bullet.vy < 0) {
-        bullet.vy *= -1;
-        bullet.y = bullet.radius;
-        bullet.bouncesRemaining -= 1;
-      }
-    }
-
     if (bullet.x < -20 || bullet.x > width + 20 || bullet.y < -20 || bullet.y > height + 20) {
       bullets.splice(index, 1);
     }
@@ -1051,7 +1087,7 @@ function update(deltaTime) {
       );
 
       if (distanceSquared <= (bullet.radius + enemy.radius) ** 2) {
-        const damage = projectileDamage(bullet);
+        const damage = projectileDamage(bullet) * (bullet.bounceCount > 0 ? BOUNCE_DAMAGE_MULTIPLIER : 1);
         bullet.hitEnemyIds.push(enemy.id);
         damageEnemyAtIndex(enemyIndex, damage, bullet.x, bullet.y);
 
@@ -1066,8 +1102,11 @@ function update(deltaTime) {
           }
         }
 
-        bullet.hitsRemaining -= 1;
-        if (bullet.hitsRemaining <= 0) bullets.splice(bulletIndex, 1);
+        const bounced = bounceBulletToNextEnemy(bullet, enemy);
+        if (!bounced) {
+          bullet.hitsRemaining -= 1;
+          if (bullet.hitsRemaining <= 0) bullets.splice(bulletIndex, 1);
+        }
         break;
       }
     }
