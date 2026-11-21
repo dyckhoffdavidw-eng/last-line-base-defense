@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#0b120e">
   <title>Last Line — Base Defense</title>
-  <link rel="stylesheet" href="styles.css?v=20261121-stats">
-  <script src="game.js?v=20261121-stats" defer></script>
+  <link rel="stylesheet" href="styles.css?v=20261121-bottom-stats">
+  <script src="game.js?v=20261121-bottom-stats" defer></script>
 </head>
 <body>
   <main class="app">
@@ -55,25 +55,6 @@
 
     <section class="game-shell">
       <canvas id="game-canvas" tabindex="0" aria-label="Base defense game area"></canvas>
-
-      <section class="base-stats-window" aria-label="Live base and weapon statistics">
-        <div class="base-stats-heading"><span>Base stats</span><strong id="stats-weapon">Rifle</strong></div>
-        <dl class="base-stats-list">
-          <div><dt>Damage</dt><dd id="stats-damage">1</dd></div>
-          <div><dt>Fire rate</dt><dd id="stats-fire-rate">4/s</dd></div>
-          <div><dt>Crit chance</dt><dd id="stats-crit-chance">0%</dd></div>
-          <div><dt>Crit amount</dt><dd id="stats-crit-amount">150%</dd></div>
-          <div><dt>Split shot</dt><dd id="stats-split-shot">Rank 0 · 1 shot</dd></div>
-          <div><dt>Bounce shot</dt><dd id="stats-bounce">Rank 0</dd></div>
-          <div><dt>Bounce range</dt><dd id="stats-bounce-range">140 px</dd></div>
-          <div><dt>Explosive rounds</dt><dd id="stats-explosive">Off</dd></div>
-          <div><dt>Damage / meter</dt><dd id="stats-distance">0%/m</dd></div>
-          <div><dt>Gun damage bonus</dt><dd id="stats-gun-bonus">+0%</dd></div>
-          <div><dt>Base max health</dt><dd id="stats-max-health">100</dd></div>
-          <div><dt>Damage resistance</dt><dd id="stats-resistance">0%</dd></div>
-          <div><dt>Wave repair</dt><dd id="stats-wave-repair">0</dd></div>
-        </dl>
-      </section>
 
       <div class="overlay" id="menu-overlay">
         <div class="overlay-card overlay-card--menu">
@@ -164,6 +145,25 @@
           <button class="button button--primary" id="retry-button" type="button">Try again</button>
         </div>
       </div>
+    </section>
+
+    <section class="base-stats-window" aria-label="Live base and weapon statistics">
+      <div class="base-stats-heading"><span>Base stats</span><strong id="stats-weapon">Rifle</strong></div>
+      <dl class="base-stats-list">
+        <div><dt>Damage</dt><dd id="stats-damage">1</dd></div>
+        <div><dt>Fire rate</dt><dd id="stats-fire-rate">4/s</dd></div>
+        <div><dt>Crit chance</dt><dd id="stats-crit-chance">0%</dd></div>
+        <div><dt>Crit amount</dt><dd id="stats-crit-amount">150%</dd></div>
+        <div><dt>Split shot</dt><dd id="stats-split-shot">Rank 0 · 1 shot</dd></div>
+        <div><dt>Bounce shot</dt><dd id="stats-bounce">Rank 0</dd></div>
+        <div><dt>Bounce range</dt><dd id="stats-bounce-range">140 px</dd></div>
+        <div><dt>Explosive rounds</dt><dd id="stats-explosive">Off</dd></div>
+        <div><dt>Damage / meter</dt><dd id="stats-distance">0%/m</dd></div>
+        <div><dt>Gun damage bonus</dt><dd id="stats-gun-bonus">+0%</dd></div>
+        <div><dt>Base max health</dt><dd id="stats-max-health">100</dd></div>
+        <div><dt>Damage resistance</dt><dd id="stats-resistance">0%</dd></div>
+        <div><dt>Wave repair</dt><dd id="stats-wave-repair">0</dd></div>
+      </dl>
     </section>
 
     <footer class="game-footer">

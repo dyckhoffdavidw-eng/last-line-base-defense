@@ -1565,17 +1565,20 @@ function drawEquippedWeapon() {
 
 function drawGunner() {
   context.save();
-  context.translate(-38, -28);
+  context.translate(-10, -24);
+  context.scale(0.82, 0.82);
   context.lineCap = 'round';
 
-  // Boots and legs planted on the command roof.
+  // Bent legs straddle the weapon in a seated operating position.
   context.strokeStyle = '#132b3d';
   context.lineWidth = 7;
   context.beginPath();
   context.moveTo(-5, 11);
-  context.lineTo(-8, 29);
+  context.lineTo(-19, 18);
+  context.lineTo(-23, 6);
   context.moveTo(5, 11);
-  context.lineTo(8, 29);
+  context.lineTo(19, 18);
+  context.lineTo(23, 6);
   context.stroke();
 
   // Uniform and armored vest.
@@ -1621,6 +1624,10 @@ function drawGunner() {
   context.fillRect(-9, -25, 18, 3);
   context.fillStyle = '#17334d';
   context.fillRect(1, -22, 7, 3);
+  context.fillStyle = '#ffd166';
+  context.font = '800 11px system-ui';
+  context.textAlign = 'center';
+  context.fillText('MIKKI', 0, -41);
   context.restore();
 }
 
@@ -1644,12 +1651,12 @@ function drawPlayer() {
   context.fillStyle = '#a9d9f5';
   context.fillRect(-12, 9, 24, 3);
 
-  drawGunner();
-
   context.save();
   context.rotate(player.angle);
   drawEquippedWeapon();
   context.restore();
+
+  drawGunner();
 
   // Clean white-and-blue rotating collar.
   context.fillStyle = '#f4f9fc';
