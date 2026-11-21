@@ -38,54 +38,43 @@ const BASE_HEALTH = 100;
 const MAX_GUN_LEVEL = 100;
 const PIXELS_PER_METER = 100;
 const GOLD_REWARD_MULTIPLIER = 0.75;
+const SKILL_RANKS_PER_BRANCH = 10;
+const skillRankNumerals = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
+
+function defineSkillBranch(idPrefix, tree, branch, stat, name, description) {
+  return Array.from({ length: SKILL_RANKS_PER_BRANCH }, (_, index) => {
+    const rank = index + 1;
+    return {
+      id: `${idPrefix}-${rank}`,
+      tree,
+      branch,
+      stat,
+      rank,
+      name: `${name} ${skillRankNumerals[index]}`,
+      description,
+      cost: rank === 1 ? 75 : rank * 200
+    };
+  });
+}
+
 const skillDefinitions = [
-  // Gunnery: 10 ranks
-  { id: 'gun-damage-1', tree: 'gun', branch: 'Damage', stat: 'damage', rank: 1, name: 'High-Caliber I', description: '+1 bullet damage', cost: 75 },
-  { id: 'gun-damage-2', tree: 'gun', branch: 'Damage', stat: 'damage', rank: 2, name: 'High-Caliber II', description: '+1 bullet damage', cost: 400 },
-  { id: 'gun-damage-3', tree: 'gun', branch: 'Damage', stat: 'damage', rank: 3, name: 'High-Caliber III', description: '+1 bullet damage', cost: 600 },
-  { id: 'gun-damage-4', tree: 'gun', branch: 'Damage', stat: 'damage', rank: 4, name: 'High-Caliber IV', description: '+1 bullet damage', cost: 800 },
-  { id: 'gun-rate-1', tree: 'gun', branch: 'Fire rate', stat: 'rate', rank: 1, name: 'Rapid Fire I', description: '+0.6 base shots / second', cost: 75 },
-  { id: 'gun-rate-2', tree: 'gun', branch: 'Fire rate', stat: 'rate', rank: 2, name: 'Rapid Fire II', description: '+0.6 base shots / second', cost: 400 },
-  { id: 'gun-rate-3', tree: 'gun', branch: 'Fire rate', stat: 'rate', rank: 3, name: 'Rapid Fire III', description: '+0.6 base shots / second', cost: 600 },
-  { id: 'gun-rate-4', tree: 'gun', branch: 'Fire rate', stat: 'rate', rank: 4, name: 'Rapid Fire IV', description: '+0.6 base shots / second', cost: 800 },
-  { id: 'gun-single-1', tree: 'gun', branch: 'Single shot', stat: 'singleShot', rank: 1, name: 'Focused Shot I', description: '+50% damage, -20% fire rate, no splitting', cost: 75 },
-  { id: 'gun-single-2', tree: 'gun', branch: 'Single shot', stat: 'singleShot', rank: 2, name: 'Focused Shot II', description: '+50% damage, -20% fire rate, no splitting', cost: 400 },
+  // Gunnery: 3 branches with 10 ranks each
+  ...defineSkillBranch('gun-damage', 'gun', 'Damage', 'damage', 'High-Caliber', '+1 bullet damage'),
+  ...defineSkillBranch('gun-rate', 'gun', 'Fire rate', 'rate', 'Rapid Fire', '+0.6 base shots / second'),
+  ...defineSkillBranch('gun-single', 'gun', 'Single shot', 'singleShot', 'Focused Shot', '+50% damage, -20% fire rate, no splitting'),
 
-  // Base: 10 ranks
-  { id: 'base-plating-1', tree: 'base', branch: 'Plating', stat: 'plating', rank: 1, name: 'Reinforced I', description: '+20 base max health', cost: 75 },
-  { id: 'base-plating-2', tree: 'base', branch: 'Plating', stat: 'plating', rank: 2, name: 'Reinforced II', description: '+20 base max health', cost: 400 },
-  { id: 'base-plating-3', tree: 'base', branch: 'Plating', stat: 'plating', rank: 3, name: 'Reinforced III', description: '+20 base max health', cost: 600 },
-  { id: 'base-plating-4', tree: 'base', branch: 'Plating', stat: 'plating', rank: 4, name: 'Reinforced IV', description: '+20 base max health', cost: 800 },
-  { id: 'base-plating-5', tree: 'base', branch: 'Plating', stat: 'plating', rank: 5, name: 'Reinforced V', description: '+20 base max health', cost: 1000 },
-  { id: 'base-engineering-1', tree: 'base', branch: 'Engineering', stat: 'engineering', rank: 1, name: 'Engineering I', description: '+6 base wave repair, +8% resist', cost: 75 },
-  { id: 'base-engineering-2', tree: 'base', branch: 'Engineering', stat: 'engineering', rank: 2, name: 'Engineering II', description: '+6 base wave repair, +8% resist', cost: 400 },
-  { id: 'base-engineering-3', tree: 'base', branch: 'Engineering', stat: 'engineering', rank: 3, name: 'Engineering III', description: '+6 base wave repair, +8% resist', cost: 600 },
-  { id: 'base-engineering-4', tree: 'base', branch: 'Engineering', stat: 'engineering', rank: 4, name: 'Engineering IV', description: '+6 base wave repair, +8% resist', cost: 800 },
-  { id: 'base-engineering-5', tree: 'base', branch: 'Engineering', stat: 'engineering', rank: 5, name: 'Engineering V', description: '+6 base wave repair, +8% resist', cost: 1000 },
+  // Base: 2 branches with 10 ranks each
+  ...defineSkillBranch('base-plating', 'base', 'Plating', 'plating', 'Reinforced', '+20 base max health'),
+  ...defineSkillBranch('base-engineering', 'base', 'Engineering', 'engineering', 'Engineering', '+6 base wave repair, +8% resist'),
 
-  // Projectile tech: 10 ranks
-  { id: 'projectile-multi-1', tree: 'projectile', branch: 'Multishot', stat: 'multishot', rank: 1, name: 'Multishot I', description: '+1 projectile per shot', cost: 75 },
-  { id: 'projectile-multi-2', tree: 'projectile', branch: 'Multishot', stat: 'multishot', rank: 2, name: 'Multishot II', description: '+1 projectile per shot', cost: 400 },
-  { id: 'projectile-multi-3', tree: 'projectile', branch: 'Multishot', stat: 'multishot', rank: 3, name: 'Multishot III', description: '+1 projectile per shot', cost: 600 },
-  { id: 'projectile-multi-4', tree: 'projectile', branch: 'Multishot', stat: 'multishot', rank: 4, name: 'Multishot IV', description: '+1 projectile per shot', cost: 800 },
-  { id: 'projectile-bounce-1', tree: 'projectile', branch: 'Bounce shot', stat: 'bounce', rank: 1, name: 'Ricochet I', description: '+1 wall bounce', cost: 75 },
-  { id: 'projectile-bounce-2', tree: 'projectile', branch: 'Bounce shot', stat: 'bounce', rank: 2, name: 'Ricochet II', description: '+1 wall bounce', cost: 400 },
-  { id: 'projectile-bounce-3', tree: 'projectile', branch: 'Bounce shot', stat: 'bounce', rank: 3, name: 'Ricochet III', description: '+1 wall bounce', cost: 600 },
-  { id: 'projectile-distance-1', tree: 'projectile', branch: 'Damage / meter', stat: 'distance', rank: 1, name: 'Longshot I', description: '+20% damage per meter', cost: 75 },
-  { id: 'projectile-distance-2', tree: 'projectile', branch: 'Damage / meter', stat: 'distance', rank: 2, name: 'Longshot II', description: '+20% damage per meter', cost: 400 },
-  { id: 'projectile-distance-3', tree: 'projectile', branch: 'Damage / meter', stat: 'distance', rank: 3, name: 'Longshot III', description: '+20% damage per meter', cost: 600 },
+  // Projectile tech: 3 branches with 10 ranks each
+  ...defineSkillBranch('projectile-multi', 'projectile', 'Multishot', 'multishot', 'Multishot', '+1 projectile per shot'),
+  ...defineSkillBranch('projectile-bounce', 'projectile', 'Bounce shot', 'bounce', 'Ricochet', '+1 wall bounce'),
+  ...defineSkillBranch('projectile-distance', 'projectile', 'Damage / meter', 'distance', 'Longshot', '+20% damage per meter'),
 
-  // Laser tech: 10 ranks
-  { id: 'laser-penetration-1', tree: 'laser', branch: 'Penetration', stat: 'laserPenetration', rank: 1, name: 'Phase Piercer I', description: '+1 target per beam; 20% damage falloff', cost: 75 },
-  { id: 'laser-penetration-2', tree: 'laser', branch: 'Penetration', stat: 'laserPenetration', rank: 2, name: 'Phase Piercer II', description: '+1 target per beam; 20% damage falloff', cost: 400 },
-  { id: 'laser-penetration-3', tree: 'laser', branch: 'Penetration', stat: 'laserPenetration', rank: 3, name: 'Phase Piercer III', description: '+1 target per beam; 20% damage falloff', cost: 600 },
-  { id: 'laser-penetration-4', tree: 'laser', branch: 'Penetration', stat: 'laserPenetration', rank: 4, name: 'Phase Piercer IV', description: '+1 target per beam; 20% damage falloff', cost: 800 },
-  { id: 'laser-penetration-5', tree: 'laser', branch: 'Penetration', stat: 'laserPenetration', rank: 5, name: 'Phase Piercer V', description: '+1 target per beam; 20% damage falloff', cost: 1000 },
-  { id: 'laser-multi-1', tree: 'laser', branch: 'Multi laser', stat: 'multiLaser', rank: 1, name: 'Split Emitter I', description: '+1 beam; secondary beams deal 45% damage', cost: 75 },
-  { id: 'laser-multi-2', tree: 'laser', branch: 'Multi laser', stat: 'multiLaser', rank: 2, name: 'Split Emitter II', description: '+1 beam; secondary beams deal 45% damage', cost: 400 },
-  { id: 'laser-multi-3', tree: 'laser', branch: 'Multi laser', stat: 'multiLaser', rank: 3, name: 'Split Emitter III', description: '+1 beam; secondary beams deal 45% damage', cost: 600 },
-  { id: 'laser-multi-4', tree: 'laser', branch: 'Multi laser', stat: 'multiLaser', rank: 4, name: 'Split Emitter IV', description: '+1 beam; secondary beams deal 45% damage', cost: 800 },
-  { id: 'laser-multi-5', tree: 'laser', branch: 'Multi laser', stat: 'multiLaser', rank: 5, name: 'Split Emitter V', description: '+1 beam; secondary beams deal 45% damage', cost: 1000 }
+  // Laser tech: 2 branches with 10 ranks each
+  ...defineSkillBranch('laser-penetration', 'laser', 'Penetration', 'laserPenetration', 'Phase Piercer', '+1 target per beam; 20% damage falloff'),
+  ...defineSkillBranch('laser-multi', 'laser', 'Multi laser', 'multiLaser', 'Split Emitter', '+1 beam; secondary beams deal 45% damage')
 ];
 const skillLevels = { damage: 0, rate: 0, singleShot: 0, plating: 0, engineering: 0, multishot: 0, bounce: 0, distance: 0, laserPenetration: 0, multiLaser: 0 };
 const skillNodes = new Map();
@@ -185,7 +174,7 @@ function bulletDamage() {
 
 function fireRate() {
   const skillScaling = 1 + (gunLevel - 1) * 0.01;
-  return (4 + skillLevels.rate * 0.6 * skillScaling) * (equippedWeapon().rateMultiplier || 1) * gunLevelFireRateMultiplier() * (1 - skillLevels.singleShot * 0.2);
+  return (4 + skillLevels.rate * 0.6 * skillScaling) * (equippedWeapon().rateMultiplier || 1) * gunLevelFireRateMultiplier() * (0.8 ** skillLevels.singleShot);
 }
 
 function skillEffectScale() {
@@ -248,6 +237,7 @@ function hideOverlays() {
   pauseOverlay.hidden = true;
   upgradeOverlay.hidden = true;
   gameoverOverlay.hidden = true;
+  nextWaveButton.hidden = true;
 }
 
 function startGame() {
@@ -753,6 +743,7 @@ function showUpgrades() {
   pauseButton.disabled = true;
   upgradeEyebrow.textContent = 'Wave cleared';
   nextWaveButton.textContent = 'Start next wave';
+  nextWaveButton.hidden = false;
   setArmoryTab('weapons');
   const waveBonus = Math.round((8 + wave * 2) * GOLD_REWARD_MULTIPLIER);
   const repaired = Math.min(waveRepairAmount(), maxBaseHealth() - baseHealth);
@@ -772,6 +763,7 @@ function showPauseArmory() {
   pauseOverlay.hidden = true;
   upgradeEyebrow.textContent = 'Paused';
   nextWaveButton.textContent = 'Resume defense';
+  nextWaveButton.hidden = false;
   upgradeMessage.textContent = 'Choose an upgrade, then resume the current wave.';
   setArmoryTab('weapons');
   updateUpgradeUI();
@@ -952,6 +944,7 @@ function togglePause(forcePause = false) {
     state = 'playing';
     pauseOverlay.hidden = true;
     upgradeOverlay.hidden = true;
+    nextWaveButton.hidden = true;
     pauseButton.innerHTML = 'Pause <kbd>P</kbd>';
     canvas.focus({ preventScroll: true });
   }
