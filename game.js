@@ -352,6 +352,7 @@ function createEnemy(type, x = 28 + Math.random() * Math.max(1, width - 56), y =
     enemy.experience = 22;
     enemy.color = '#ff8c69';
   } else if (type === 'boss') {
+    enemy.name = wave === 5 ? 'Butters' : 'Boss';
     enemy.health = 55 + wave * 15;
     enemy.radius = 34;
     enemy.speed = 22 + wave;
@@ -1612,15 +1613,37 @@ function drawEnemy(enemy) {
   }
 
   if (enemy.type === 'boss') {
+    if (enemy.name === 'Butters') {
+      const lensCenters = [-radius * 0.3, radius * 0.3];
+      context.fillStyle = 'rgba(185, 229, 255, 0.28)';
+      context.strokeStyle = '#f4f9fc';
+      context.lineWidth = 2.5;
+      for (const centerX of lensCenters) {
+        context.fillRect(centerX - 9, -6, 18, 14);
+        context.strokeRect(centerX - 9, -6, 18, 14);
+        context.fillStyle = '#ffffff';
+        context.fillRect(centerX - 5, -3, 4, 2);
+        context.fillStyle = 'rgba(185, 229, 255, 0.28)';
+      }
+      context.beginPath();
+      context.moveTo(lensCenters[0] + 9, -1);
+      context.lineTo(lensCenters[1] - 9, -1);
+      context.moveTo(lensCenters[0] - 9, -1);
+      context.lineTo(-radius + 5, -4);
+      context.moveTo(lensCenters[1] + 9, -1);
+      context.lineTo(radius - 5, -4);
+      context.stroke();
+    }
+
     context.strokeStyle = '#ffb454';
     context.lineWidth = 4;
     context.beginPath();
     context.arc(0, 0, radius + 7, 0, Math.PI * 2);
     context.stroke();
     context.fillStyle = '#ffb454';
-    context.font = '800 10px system-ui';
+    context.font = enemy.name === 'Butters' ? '800 12px system-ui' : '800 10px system-ui';
     context.textAlign = 'center';
-    context.fillText('BOSS', 0, -radius - 15);
+    context.fillText(enemy.name.toUpperCase(), 0, -radius - 15);
   }
 
   context.restore();
