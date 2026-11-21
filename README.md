@@ -31,6 +31,7 @@ The executable is unsigned, so Windows SmartScreen may display a warning when it
 - Hold click or touch: fire
 - Space: fire with auto-aim
 - P or Escape: pause/resume; the pause menu provides Armory access
+- Start next wave: use the button beside the Wave number after clearing a wave
 
 ## Weapons
 
@@ -60,8 +61,8 @@ Weapons require both the necessary gun level and a one-time gold unlock cost.
 
 ## Skill trees
 
-- **Gunnery:** four bullet-damage ranks (+1 each), four fire-rate ranks (+0.6 shots/sec each), and two Single shot ranks, for 10 total ranks. Each Single shot rank adds 50% projectile damage but reduces fire rate by 20%. Focused Shot and Multishot are mutually exclusive upgrade paths.
-- **Base:** five ranks each of maximum-health plating and engineering, for 10 total ranks. Engineering adds damage resistance and repairs after each wave.
-- **Projectile tech:** four multishot ranks, three wall-bounce ranks, and three damage-per-meter ranks, for 10 total ranks. When Multishot is active, every weapon begins with one centered projectile that splits after traveling 120 pixels into 1 + Multishot rank projectiles, with a 0.12-radian spread between shots. Each rank multiplies projectile damage by 0.8. One in-game meter is 100 pixels; the distance bonus is capped at +200%.
-- **Laser tech:** five Penetration ranks and five Multi laser ranks, for 10 total ranks. The Laser must be equipped to purchase these upgrades. Each Penetration rank adds one target per beam, with 20% damage falloff per target. Each Multi laser rank adds a beam; secondary beams deal 45% damage.
-- Later ranks require only the previous rank and gold; there are no gun-level requirements. Rank-one upgrades cost 75 gold; later ranks cost 200 × their rank number (400, 600, and so on). Damage, fire-rate bonuses, plating health, and engineering repairs scale with gun level. Gold comes from enemy takedowns and wave bonuses. The Armory is available between waves and from the pause menu.
+- **Gunnery:** 10 bullet-damage ranks (+1 each), 10 fire-rate ranks (+0.6 shots/sec each), and 10 Single shot ranks, for 30 total ranks. Each Single shot rank adds 50% projectile damage and multiplies fire rate by 0.8, with the fire-rate penalty compounding across ranks. Focused Shot and Multishot are mutually exclusive upgrade paths.
+- **Base:** 10 ranks each of maximum-health plating and engineering, for 20 total ranks. Engineering adds damage resistance and repairs after each wave.
+- **Projectile tech:** 10 multishot ranks, 10 wall-bounce ranks, and 10 damage-per-meter ranks, for 30 total ranks. When Multishot is active, every weapon begins with one centered projectile that splits after traveling 120 pixels into 1 + Multishot rank projectiles, with a 0.12-radian spread between shots. Each rank multiplies projectile damage by 0.8. One in-game meter is 100 pixels; the distance bonus is capped at +200%.
+- **Laser tech:** 10 Penetration ranks and 10 Multi laser ranks, for 20 total ranks. The Laser must be equipped to purchase these upgrades. Each Penetration rank adds one target per beam, with 20% damage falloff per target. Each Multi laser rank adds a beam; secondary beams deal 45% damage.
+- There are 100 total upgrades across 10 branches. Later ranks require only the previous rank and gold; there are no gun-level requirements. Rank-one upgrades cost 75 gold; later ranks cost 200 × their rank number (400, 600, and so on through rank 10 at 2,000 gold). Damage, fire-rate bonuses, plating health, and engineering repairs scale with gun level. Gold comes from enemy takedowns and wave bonuses. The Armory is available between waves and from the pause menu.

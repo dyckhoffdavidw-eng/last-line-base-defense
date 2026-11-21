@@ -150,6 +150,13 @@ kbd {
   font-variant-numeric: tabular-nums;
 }
 
+.wave-value-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
 .stat .credits {
   color: var(--credits);
 }
@@ -348,6 +355,14 @@ kbd {
   align-items: center;
   flex-direction: column;
   gap: 10px;
+}
+
+.next-wave-button {
+  min-width: 0;
+  padding: 6px 9px;
+  border-radius: 7px;
+  font-size: 0.62rem;
+  white-space: nowrap;
 }
 
 button:focus-visible {

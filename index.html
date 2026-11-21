@@ -22,9 +22,12 @@
     </header>
 
     <section class="stats" aria-label="Game statistics">
-      <div class="stat">
+      <div class="stat stat--wave">
         <span class="stat-label">Wave</span>
-        <strong id="wave-value">1</strong>
+        <div class="wave-value-row">
+          <strong id="wave-value">1</strong>
+          <button class="button button--primary next-wave-button" id="next-wave-button" type="button" hidden>Start next wave</button>
+        </div>
       </div>
       <div class="stat">
         <span class="stat-label">Gold</span>
@@ -99,28 +102,28 @@
               <section class="skill-tree skill-tree--gun" aria-labelledby="gun-tree-title">
                 <div class="tree-heading">
                   <span class="tree-icon" aria-hidden="true">↑</span>
-                  <div><h3 id="gun-tree-title">Gunnery</h3><p>10 ranks · Shared weapon skills</p></div>
+                  <div><h3 id="gun-tree-title">Gunnery</h3><p>10 ranks per branch · Shared weapon skills</p></div>
                 </div>
                 <div class="skill-branches" id="gun-branches"></div>
               </section>
               <section class="skill-tree" aria-labelledby="base-tree-title">
                 <div class="tree-heading">
                   <span class="tree-icon" aria-hidden="true">+</span>
-                  <div><h3 id="base-tree-title">Base</h3><p>10 ranks · Defense systems</p></div>
+                  <div><h3 id="base-tree-title">Base</h3><p>10 ranks per branch · Defense systems</p></div>
                 </div>
                 <div class="skill-branches" id="base-branches"></div>
               </section>
               <section class="skill-tree skill-tree--projectiles" aria-labelledby="projectile-tree-title">
                 <div class="tree-heading">
                   <span class="tree-icon" aria-hidden="true">✦</span>
-                  <div><h3 id="projectile-tree-title">Projectile tech</h3><p>10 ranks · Applies to rifles, cannons, machine guns, and snipers</p></div>
+                  <div><h3 id="projectile-tree-title">Projectile tech</h3><p>10 ranks per branch · Applies to rifles, cannons, machine guns, and snipers</p></div>
                 </div>
                 <div class="skill-branches" id="projectile-branches"></div>
               </section>
               <section class="skill-tree skill-tree--laser" aria-labelledby="laser-tree-title">
                 <div class="tree-heading">
                   <span class="tree-icon" aria-hidden="true">≋</span>
-                  <div><h3 id="laser-tree-title">Laser tech</h3><p>10 ranks · Penetration and multiple beams</p></div>
+                  <div><h3 id="laser-tree-title">Laser tech</h3><p>10 ranks per branch · Penetration and multiple beams</p></div>
                 </div>
                 <div class="skill-branches" id="laser-branches"></div>
               </section>
@@ -131,7 +134,6 @@
             <button id="repair-button" type="button"><span id="repair-cost">20 gold</span></button>
           </div>
           <p class="upgrade-message" id="upgrade-message" role="status">Choose a skill, or save your credits.</p>
-          <button class="button button--primary" id="next-wave-button" type="button">Start next wave</button>
         </div>
       </div>
 
